@@ -1,0 +1,4 @@
+{
+  "status": "NOT RUN: provide --api-url for a separately running backend",
+  "scope": "API latency is not inferred from model-only timing or batch throughput"
+}

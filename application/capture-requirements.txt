@@ -1,0 +1,2 @@
+# Optional dependency for live packet metadata capture only.
+scapy>=2.6,<3

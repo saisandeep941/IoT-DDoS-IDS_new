@@ -1,0 +1,61 @@
+model,ci_type,metric,lower_95,upper_95,replicates
+Random Forest (matched research refit),stratified_row_bootstrap,accuracy,0.1406095438539685,0.14282861807045236,500
+Random Forest (matched research refit),stratified_row_bootstrap,precision,0.99969316161218,0.9999384152455674,500
+Random Forest (matched research refit),stratified_row_bootstrap,recall,0.13194794221858816,0.13419112837285363,500
+Random Forest (matched research refit),stratified_row_bootstrap,f1,0.23313086964650623,0.23662495012641435,500
+Random Forest (matched research refit),stratified_row_bootstrap,roc_auc,0.9815730225134612,0.9854279291260732,500
+Random Forest (matched research refit),stratified_row_bootstrap,average_precision,0.9996366652929363,0.9997137813200562,500
+Random Forest (matched research refit),tuple_cluster_bootstrap,accuracy,0.14062368155436478,0.14289903434031143,250
+Random Forest (matched research refit),tuple_cluster_bootstrap,precision,0.999489073742675,1.0,250
+Random Forest (matched research refit),tuple_cluster_bootstrap,recall,0.13197609381554745,0.13418935967444454,250
+Random Forest (matched research refit),tuple_cluster_bootstrap,f1,0.23317772960358474,0.2366158751277074,250
+Random Forest (matched research refit),tuple_cluster_bootstrap,roc_auc,0.9798658046154438,0.9866093678779254,250
+Random Forest (matched research refit),tuple_cluster_bootstrap,average_precision,0.9995948174937123,0.9997371133147813,250
+Extra Trees,stratified_row_bootstrap,accuracy,0.14128323956773384,0.14349253248067348,500
+Extra Trees,stratified_row_bootstrap,precision,0.9998672940295764,1.0,500
+Extra Trees,stratified_row_bootstrap,recall,0.1326202643772145,0.13485159443990188,500
+Extra Trees,stratified_row_bootstrap,f1,0.23418135666724066,0.2376532598654141,500
+Extra Trees,stratified_row_bootstrap,roc_auc,0.9914240291051444,0.9953200928724415,500
+Extra Trees,stratified_row_bootstrap,average_precision,0.9998450769380587,0.9999228310482889,500
+Extra Trees,tuple_cluster_bootstrap,accuracy,0.1413311845936332,0.14360248591981434,250
+Extra Trees,tuple_cluster_bootstrap,precision,0.9998366519295501,1.0,250
+Extra Trees,tuple_cluster_bootstrap,recall,0.13265507701579476,0.13490187825661898,250
+Extra Trees,tuple_cluster_bootstrap,f1,0.23423686944919084,0.23773165696108142,250
+Extra Trees,tuple_cluster_bootstrap,roc_auc,0.9885160968002342,0.998004756026286,250
+Extra Trees,tuple_cluster_bootstrap,average_precision,0.9997934127093233,0.9999662857327966,250
+Histogram Gradient Boosting,stratified_row_bootstrap,accuracy,0.14132411867082204,0.14353536784447052,500
+Histogram Gradient Boosting,stratified_row_bootstrap,precision,0.9996748622795211,0.9999185121361562,500
+Histogram Gradient Boosting,stratified_row_bootstrap,recall,0.13267504769692015,0.13490808122104114,500
+Histogram Gradient Boosting,stratified_row_bootstrap,f1,0.23426397186805006,0.2377379917094803,500
+Histogram Gradient Boosting,stratified_row_bootstrap,roc_auc,0.9296574339148918,0.9394659196999775,500
+Histogram Gradient Boosting,stratified_row_bootstrap,average_precision,0.9990764952743169,0.9992159414038957,500
+Histogram Gradient Boosting,tuple_cluster_bootstrap,accuracy,0.1413815038004035,0.14363610553290565,250
+Histogram Gradient Boosting,tuple_cluster_bootstrap,precision,0.9994503313121743,1.0,250
+Histogram Gradient Boosting,tuple_cluster_bootstrap,recall,0.13270279144391384,0.13494030794990458,250
+Histogram Gradient Boosting,tuple_cluster_bootstrap,f1,0.2343031320966109,0.23778207710448723,250
+Histogram Gradient Boosting,tuple_cluster_bootstrap,roc_auc,0.9272246971539394,0.9408178590889025,250
+Histogram Gradient Boosting,tuple_cluster_bootstrap,average_precision,0.9990241696561435,0.9992590644881133,250
+Logistic Regression,stratified_row_bootstrap,accuracy,0.14062060684556332,0.1428412325791611,500
+Logistic Regression,stratified_row_bootstrap,precision,0.9998975040702729,1.0,500
+Logistic Regression,stratified_row_bootstrap,recall,0.13194521668029435,0.1341898337421641,500
+Logistic Regression,stratified_row_bootstrap,f1,0.23312947804559192,0.23662586576908082,500
+Logistic Regression,stratified_row_bootstrap,roc_auc,0.8766058889098546,0.8813738260598979,500
+Logistic Regression,stratified_row_bootstrap,average_precision,0.998622135794149,0.9986947131769328,500
+Logistic Regression,tuple_cluster_bootstrap,accuracy,0.1406523530603048,0.1429523658307331,250
+Logistic Regression,tuple_cluster_bootstrap,precision,0.9998766909244534,1.0,250
+Logistic Regression,tuple_cluster_bootstrap,recall,0.1319801440736159,0.13421259438178262,250
+Logistic Regression,tuple_cluster_bootstrap,f1,0.2331840514016186,0.236662147513871,250
+Logistic Regression,tuple_cluster_bootstrap,roc_auc,0.8758145852179539,0.8817119856040156,250
+Logistic Regression,tuple_cluster_bootstrap,average_precision,0.9986100556290669,0.998704286873709,250
+Deployed Random Forest V2 (reference only),stratified_row_bootstrap,accuracy,0.9983526261113584,0.9986090986360141,500
+Deployed Random Forest V2 (reference only),stratified_row_bootstrap,precision,1.0,1.0,500
+Deployed Random Forest V2 (reference only),stratified_row_bootstrap,recall,0.9983359907331698,0.9985950531479968,500
+Deployed Random Forest V2 (reference only),stratified_row_bootstrap,f1,0.999167302557991,0.9992970327577275,500
+Deployed Random Forest V2 (reference only),stratified_row_bootstrap,roc_auc,0.9999999856366707,1.0,500
+Deployed Random Forest V2 (reference only),stratified_row_bootstrap,average_precision,0.9999999998475292,1.0,500
+Deployed Random Forest V2 (reference only),tuple_cluster_bootstrap,accuracy,0.9983326472477726,0.998633168917118,250
+Deployed Random Forest V2 (reference only),tuple_cluster_bootstrap,precision,1.0,1.0,250
+Deployed Random Forest V2 (reference only),tuple_cluster_bootstrap,recall,0.9983158249299993,0.9986195311976428,250
+Deployed Random Forest V2 (reference only),tuple_cluster_bootstrap,f1,0.9991572027559459,0.9993092888449874,250
+Deployed Random Forest V2 (reference only),tuple_cluster_bootstrap,roc_auc,0.9999999824949168,1.0,250
+Deployed Random Forest V2 (reference only),tuple_cluster_bootstrap,average_precision,0.9999999998159493,1.0000000000000002,250

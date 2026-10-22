@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="397" viewBox="0 0 1120 397">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#182230}.muted{fill:#667085;font-size:13px}.title{font-size:22px;font-weight:700}.label{font-size:14px}</style>
+<text x="560" y="34" text-anchor="middle" class="title">Held-out model comparison</text>
+<line x1="235.0" y1="84" x2="235.0" y2="333" stroke="#eaecf0"/>
+<text x="235.0" y="357" text-anchor="middle" class="muted">0.0</text>
+<line x1="292.0" y1="84" x2="292.0" y2="333" stroke="#eaecf0"/>
+<text x="292.0" y="357" text-anchor="middle" class="muted">0.1</text>
+<line x1="349.0" y1="84" x2="349.0" y2="333" stroke="#eaecf0"/>
+<text x="349.0" y="357" text-anchor="middle" class="muted">0.2</text>
+<line x1="406.0" y1="84" x2="406.0" y2="333" stroke="#eaecf0"/>
+<text x="406.0" y="357" text-anchor="middle" class="muted">0.3</text>
+<line x1="463.0" y1="84" x2="463.0" y2="333" stroke="#eaecf0"/>
+<text x="463.0" y="357" text-anchor="middle" class="muted">0.4</text>
+<line x1="520.0" y1="84" x2="520.0" y2="333" stroke="#eaecf0"/>
+<text x="520.0" y="357" text-anchor="middle" class="muted">0.5</text>
+<line x1="577.0" y1="84" x2="577.0" y2="333" stroke="#eaecf0"/>
+<text x="577.0" y="357" text-anchor="middle" class="muted">0.6</text>
+<line x1="634.0" y1="84" x2="634.0" y2="333" stroke="#eaecf0"/>
+<text x="634.0" y="357" text-anchor="middle" class="muted">0.7</text>
+<line x1="691.0" y1="84" x2="691.0" y2="333" stroke="#eaecf0"/>
+<text x="691.0" y="357" text-anchor="middle" class="muted">0.8</text>
+<line x1="748.0" y1="84" x2="748.0" y2="333" stroke="#eaecf0"/>
+<text x="748.0" y="357" text-anchor="middle" class="muted">0.9</text>
+<line x1="805.0" y1="84" x2="805.0" y2="333" stroke="#eaecf0"/>
+<text x="805.0" y="357" text-anchor="middle" class="muted">1.0</text>
+<text x="223" y="112" text-anchor="end" class="label">Random Forest (matched research refit)</text>
+<rect x="235" y="93" width="133.86" height="8" rx="3" fill="#2855a6"/>
+<rect x="235" y="104" width="75.84" height="8" rx="3" fill="#168a76"/>
+<rect x="235" y="115" width="569.89" height="8" rx="3" fill="#bb6b1c"/>
+<rect x="235" y="126" width="560.70" height="8" rx="3" fill="#7b61a8"/>
+<text x="223" y="174" text-anchor="end" class="label">Extra Trees</text>
+<rect x="235" y="155" width="134.48" height="8" rx="3" fill="#2855a6"/>
+<rect x="235" y="166" width="76.23" height="8" rx="3" fill="#168a76"/>
+<rect x="235" y="177" width="569.97" height="8" rx="3" fill="#bb6b1c"/>
+<rect x="235" y="188" width="566.30" height="8" rx="3" fill="#7b61a8"/>
+<text x="223" y="236" text-anchor="end" class="label">Histogram Gradient Boosting</text>
+<rect x="235" y="217" width="134.52" height="8" rx="3" fill="#2855a6"/>
+<rect x="235" y="228" width="76.26" height="8" rx="3" fill="#168a76"/>
+<rect x="235" y="239" width="569.88" height="8" rx="3" fill="#bb6b1c"/>
+<rect x="235" y="250" width="532.62" height="8" rx="3" fill="#7b61a8"/>
+<text x="223" y="298" text-anchor="end" class="label">Logistic Regression</text>
+<rect x="235" y="279" width="133.87" height="8" rx="3" fill="#2855a6"/>
+<rect x="235" y="290" width="75.84" height="8" rx="3" fill="#168a76"/>
+<rect x="235" y="301" width="569.98" height="8" rx="3" fill="#bb6b1c"/>
+<rect x="235" y="312" width="500.99" height="8" rx="3" fill="#7b61a8"/>
+<rect x="235" y="361" width="12" height="12" fill="#2855a6"/>
+<text x="253" y="372" class="muted">F1</text>
+<rect x="385" y="361" width="12" height="12" fill="#168a76"/>
+<text x="403" y="372" class="muted">Recall</text>
+<rect x="535" y="361" width="12" height="12" fill="#bb6b1c"/>
+<text x="553" y="372" class="muted">Precision</text>
+<rect x="685" y="361" width="12" height="12" fill="#7b61a8"/>
+<text x="703" y="372" class="muted">ROC AUC</text>
+</svg>

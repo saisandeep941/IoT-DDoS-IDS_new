@@ -1,0 +1,2 @@
+model,accuracy,precision,recall,f1,roc_auc,average_precision,tn,fp,fn,tp,training_seconds
+Deployed Random Forest V2 (reference only),0.9984808623736863,1.0,0.9984655219405832,0.9992321718625765,0.9999999959539917,0.9999999999554287,3705,0,563,366337,existing artifact

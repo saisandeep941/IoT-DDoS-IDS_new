@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="950" height="565" viewBox="0 0 950 565">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#182230}.muted{fill:#667085;font-size:13px}.title{font-size:22px;font-weight:700}.label{font-size:14px}</style>
+<text x="475" y="34" text-anchor="middle" class="title">Random Forest V2 — global SHAP importance</text>
+<text x="300" y="89" text-anchor="end" class="label">Fwd Packet Length Mean</text>
+<rect x="320" y="75" width="500.00" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="89" class="muted">0.058991</text>
+<text x="300" y="120" text-anchor="end" class="label">Min Packet Length</text>
+<rect x="320" y="106" width="324.92" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="120" class="muted">0.038335</text>
+<text x="300" y="151" text-anchor="end" class="label">Destination Port</text>
+<rect x="320" y="137" width="306.08" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="151" class="muted">0.036112</text>
+<text x="300" y="182" text-anchor="end" class="label">Inbound</text>
+<rect x="320" y="168" width="265.23" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="182" class="muted">0.031292</text>
+<text x="300" y="213" text-anchor="end" class="label">Fwd Packet Length Min</text>
+<rect x="320" y="199" width="248.18" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="213" class="muted">0.029281</text>
+<text x="300" y="244" text-anchor="end" class="label">Subflow Fwd Bytes</text>
+<rect x="320" y="230" width="227.53" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="244" class="muted">0.026844</text>
+<text x="300" y="275" text-anchor="end" class="label">Fwd Packet Length Max</text>
+<rect x="320" y="261" width="216.57" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="275" class="muted">0.025551</text>
+<text x="300" y="306" text-anchor="end" class="label">Avg Fwd Segment Size</text>
+<rect x="320" y="292" width="214.58" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="306" class="muted">0.025317</text>
+<text x="300" y="337" text-anchor="end" class="label">Average Packet Size</text>
+<rect x="320" y="323" width="158.97" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="337" class="muted">0.018756</text>
+<text x="300" y="368" text-anchor="end" class="label">URG Flag Count</text>
+<rect x="320" y="354" width="139.59" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="368" class="muted">0.016469</text>
+<text x="300" y="399" text-anchor="end" class="label">Bwd Packets/s</text>
+<rect x="320" y="385" width="137.05" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="399" class="muted">0.01617</text>
+<text x="300" y="430" text-anchor="end" class="label">Packet Length Mean</text>
+<rect x="320" y="416" width="134.81" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="430" class="muted">0.015905</text>
+<text x="300" y="461" text-anchor="end" class="label">Total Backward Packets</text>
+<rect x="320" y="447" width="126.07" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="461" class="muted">0.014874</text>
+<text x="300" y="492" text-anchor="end" class="label">Max Packet Length</text>
+<rect x="320" y="478" width="122.48" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="492" class="muted">0.01445</text>
+<text x="300" y="523" text-anchor="end" class="label">Subflow Bwd Packets</text>
+<rect x="320" y="509" width="101.75" height="18" rx="4" fill="#2855a6"/>
+<text x="832" y="523" class="muted">0.012005</text>
+</svg>

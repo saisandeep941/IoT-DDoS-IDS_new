@@ -1,0 +1,361 @@
+{
+  "archive": "IoT-DDoS-IDS-Submission.zip",
+  "archive_sha256": "88C50F8F25459EEBF460FE72C9D0DFBE039141EA0EFB8672902EA17C2E435E8B",
+  "files": [
+    {
+      "path": "application/capture-requirements.txt",
+      "size_bytes": 75,
+      "sha256": "12DE283781A07AEDD88FA16F177A9E40D2FE8F5497D1428492C5FBD0D5698004"
+    },
+    {
+      "path": "application/requirements.txt",
+      "size_bytes": 243,
+      "sha256": "2CE018B34FA1380DFD342050404432957FE6DA91406E5D5E66D4AD410049D089"
+    },
+    {
+      "path": "application/backend/capture_routes.py",
+      "size_bytes": 3961,
+      "sha256": "0C69C780C31C8FBB3E941EE35C8E01A9A41BB9B001536A7B37B388E91190138E"
+    },
+    {
+      "path": "application/backend/capture_telemetry.py",
+      "size_bytes": 4913,
+      "sha256": "628ADE16ADC99BD34C8474EBAA49714989C74FE1BA0FA0F63DE205CBFEAFBEB7"
+    },
+    {
+      "path": "application/backend/capture_worker.py",
+      "size_bytes": 16867,
+      "sha256": "D90389CD65E884136A7E7CAAF74FC43640AD0B7B115D44078C6F618CCB792114"
+    },
+    {
+      "path": "application/backend/dataset_validation.py",
+      "size_bytes": 1748,
+      "sha256": "7C00B91E0E7254F77C1604CA3DF20C0C7412FA6EDCEE9C062D87C8C60EF8082E"
+    },
+    {
+      "path": "application/backend/flow_telemetry.py",
+      "size_bytes": 13619,
+      "sha256": "834DAA2004526A1826576C701EAAC91D59B80C2224BBDD92A7291EC859306DF2"
+    },
+    {
+      "path": "application/backend/main.py",
+      "size_bytes": 45325,
+      "sha256": "9D8A1ED3D3CF1A0BABFF8A3112E53B2BB153469D33D8EC4864ABAF83AFC94051"
+    },
+    {
+      "path": "application/backend/real_model_features_v2.joblib",
+      "size_bytes": 1526,
+      "sha256": "C49933ABE8DF5A693915BD788153BCB7302D75AAB486A65E6B07E0A1ABCC3E28"
+    },
+    {
+      "path": "application/backend/real_model_v2.joblib",
+      "size_bytes": 2205506,
+      "sha256": "61AF42BE7F2B079E4BF6FE8D766373CD1D2F91966B28E6BF722810DE53F4D9D2"
+    },
+    {
+      "path": "application/frontend/.gitignore",
+      "size_bytes": 253,
+      "sha256": "FE718E7BABB14F3CBAD2D97F08889B9CE5215ED3FE0E43B2B8CFBFB3B9B844E8"
+    },
+    {
+      "path": "application/frontend/.oxlintrc.json",
+      "size_bytes": 231,
+      "sha256": "1BE899E45C49B2A2EDC715BC3BFB31D8ED8E866ED7EBAB2065FF6E55E88C2396"
+    },
+    {
+      "path": "application/frontend/index.html",
+      "size_bytes": 360,
+      "sha256": "67B571F16B69FD5E27FEAB5053D062DFAE38E97DDB820F26881F05374582D2D7"
+    },
+    {
+      "path": "application/frontend/package-lock.json",
+      "size_bytes": 68756,
+      "sha256": "30F02D4847145B6199F698AED6CF3746624E0A0DBFCABF78AC1A5C03917A483C"
+    },
+    {
+      "path": "application/frontend/package.json",
+      "size_bytes": 582,
+      "sha256": "92A5B7E7A58362EB773E37E3858099CB524360054E7BA8B3BAAB44231C7E9B77"
+    },
+    {
+      "path": "application/frontend/vite.config.js",
+      "size_bytes": 161,
+      "sha256": "E1EEFD0ED1639C88D1213884EF760516884DB9E168190E223FEE6B063AD3E088"
+    },
+    {
+      "path": "application/frontend/public/favicon.svg",
+      "size_bytes": 9522,
+      "sha256": "61BC9A161DE58248288E6905425D7180F0624C2865007B97D763FDAC12043A66"
+    },
+    {
+      "path": "application/frontend/public/icons.svg",
+      "size_bytes": 5031,
+      "sha256": "B45FA506195CFCDEF406BA9F0C77B36DDC1A7C224040926EC70ABC2FDEA7B93A"
+    },
+    {
+      "path": "application/frontend/src/App.css",
+      "size_bytes": 13402,
+      "sha256": "F2879D7497AFDC12FE4ECA270C0E4A8A6F8EDB4A09C26B61BF5EA57C4E2C20C6"
+    },
+    {
+      "path": "application/frontend/src/App.jsx",
+      "size_bytes": 37478,
+      "sha256": "EBDD630E1023AB6FF3E29C9A09DA014CF38637C7F21C9D11623DD540C08A002E"
+    },
+    {
+      "path": "application/frontend/src/flowTelemetry.js",
+      "size_bytes": 811,
+      "sha256": "442A10B419726149E82F89A8FBE0901DD2807029CFBB79B2A61426E0B5090BA0"
+    },
+    {
+      "path": "application/frontend/src/flowTelemetry.test.js",
+      "size_bytes": 1753,
+      "sha256": "EB39805D188C7AF3325E75BED6A9FAB677411D02FEE8AF0CCF044FE640E482F9"
+    },
+    {
+      "path": "application/frontend/src/index.css",
+      "size_bytes": 135,
+      "sha256": "46C8BE700CEBF47D601A3838D895DD7E15BFD317049872219B3F35C92541D506"
+    },
+    {
+      "path": "application/frontend/src/LiveCapturePanel.css",
+      "size_bytes": 2622,
+      "sha256": "DF4F7E4CAA4D0D115640087FAEFA2B7DE179F64CCDD77480B6062C60F633C98A"
+    },
+    {
+      "path": "application/frontend/src/LiveCapturePanel.jsx",
+      "size_bytes": 7188,
+      "sha256": "2CB127BCA7A161FA0401AF466E0E531EA8D2DB40FD2B52E074282E7555DEB441"
+    },
+    {
+      "path": "application/frontend/src/main.jsx",
+      "size_bytes": 229,
+      "sha256": "4B4B864DBE45253425D0C925337180EC07E204295179F80F59551216F466F618"
+    },
+    {
+      "path": "application/frontend/src/uploadWorkflow.js",
+      "size_bytes": 1807,
+      "sha256": "BD33D90DBFA26130CAEE7043E82A6FF144AA454FB7ECE5BFF3FEA1DB93B5776F"
+    },
+    {
+      "path": "application/frontend/src/uploadWorkflow.test.js",
+      "size_bytes": 2433,
+      "sha256": "6E4DA9996B5C0723BE312468872AD33BC56990D7A77BE61593AFEE1269418E2D"
+    },
+    {
+      "path": "application/ml/test_capture_flow_integration.py",
+      "size_bytes": 18255,
+      "sha256": "36135AC5FDFC5663D6B1454EDE9641B6AF9736E3D19F0BD7348B687C91103AF2"
+    },
+    {
+      "path": "application/ml/test_capture_telemetry.py",
+      "size_bytes": 14592,
+      "sha256": "D37A1CCB9EE2BC5D4FECFE944CACB5C77EBCAC13CB720FDAEB9CFA787E916993"
+    },
+    {
+      "path": "application/ml/test_csv_prediction_endpoint.py",
+      "size_bytes": 2547,
+      "sha256": "DFA2D2E5D181CD615DC27E3E78780CFB649987B7677604A394D60CB30C8CB93E"
+    },
+    {
+      "path": "application/ml/test_csv_replay.py",
+      "size_bytes": 5674,
+      "sha256": "7D974C9C6D45D1177089BC800FFE385338D6D11824C0C87327F1046BBC1A9E00"
+    },
+    {
+      "path": "application/ml/test_research_evaluation_api.py",
+      "size_bytes": 2374,
+      "sha256": "81766C36148514A16EC6936E03A3CA0A3B4E9A0791826353D8D9B00E321FED25"
+    },
+    {
+      "path": "application/ml/test_dataset_analysis.py",
+      "size_bytes": 2763,
+      "sha256": "B415E91067793F6B402BFC3D801360B0A61C41CD77F66352E5F77B1C2F58A672"
+    },
+    {
+      "path": "application/ml/test_detection_history.py",
+      "size_bytes": 1325,
+      "sha256": "43BE8A86941142386E657D5CC25B4D393218D4C59A3D2CB0774032CF6E24B62B"
+    },
+    {
+      "path": "application/ml/test_flow_telemetry.py",
+      "size_bytes": 8528,
+      "sha256": "F9205B54D5973A760B39E7A6F7026333B3A3021FE98707DDC9C644CC0C0CE9DA"
+    },
+    {
+      "path": "application/ml/test_stream_severity.py",
+      "size_bytes": 2284,
+      "sha256": "19D6556DB1ACAEF6C57A60820C96D7620DAABEC29E784E19DBBEDA810ACC6D4F"
+    },
+    {
+      "path": "application/ml/test_risk_explainability.py",
+      "size_bytes": 5330,
+      "sha256": "5287A3CDE973736BFAF150ED200B0D4D7D4FADE5A923764C558FE47FC0AC5E08"
+    },
+    {
+      "path": "docs/research_evaluation.md",
+      "size_bytes": 12596,
+      "sha256": "5E96F2D651AF379DF3654E3DAE6A969F419844CA7AB2A361A6B074194711A5FB"
+    },
+    {
+      "path": "docs/limitation1_independent_evaluation.md",
+      "size_bytes": 8673,
+      "sha256": "AE6B75B6EAA9F7E3A9D266E875E43A673907C48D1BE944A0A572A83C124C6489"
+    },
+    {
+      "path": "docs/submission_manifest.md",
+      "size_bytes": 5383,
+      "sha256": "FFC63F6D4FE8FFCFD3B9812D81AEB3CC3CAB360D02D80BE8A4176A8F9EF2D389"
+    },
+    {
+      "path": "model/real_model_features_v2.joblib",
+      "size_bytes": 1526,
+      "sha256": "C49933ABE8DF5A693915BD788153BCB7302D75AAB486A65E6B07E0A1ABCC3E28"
+    },
+    {
+      "path": "model/real_model_v2.joblib",
+      "size_bytes": 2205506,
+      "sha256": "61AF42BE7F2B079E4BF6FE8D766373CD1D2F91966B28E6BF722810DE53F4D9D2"
+    },
+    {
+      "path": "research/run_manifest.json",
+      "size_bytes": 7379,
+      "sha256": "22BC2D2DEE7946B7DD634D373BF68F00DD6964E0653A171F4670332331946410"
+    },
+    {
+      "path": "research/code/build_submission.py",
+      "size_bytes": 6511,
+      "sha256": "B240C1914031F13A7661529C1B1157A2B19FCE32ACE02BC7036A7C7EE10CD5C7"
+    },
+    {
+      "path": "research/code/benchmark_v2_resource_usage.py",
+      "size_bytes": 15960,
+      "sha256": "D566A19AA0A63187B65A0989EB50D383DCE82454B75CF5170CE04F295A384894"
+    },
+    {
+      "path": "research/code/evaluate_research.py",
+      "size_bytes": 36562,
+      "sha256": "9FCC7358ECE2991570AC1142B9D99AE1CC2D21104F322E1F6693B927A13160D6"
+    },
+    {
+      "path": "research/code/research_eval_protocol.py",
+      "size_bytes": 40545,
+      "sha256": "11880251B19B5AA623C1FBA27E56281BC25E56A10E9E2006AD270046639FA3DB"
+    },
+    {
+      "path": "research/code/test_research_evaluation.py",
+      "size_bytes": 19166,
+      "sha256": "A3CD309731CB3AD407584927071FCC94E287F035241968CC6A02DEDDB103ECEA"
+    },
+    {
+      "path": "research/code/validate_dataset.py",
+      "size_bytes": 2806,
+      "sha256": "9E950B2226E084979EAC9791A9D36E64E19ABB40C139F24F9BC5CCE80DE59C3D"
+    },
+    {
+      "path": "research/code/test_validate_dataset.py",
+      "size_bytes": 1246,
+      "sha256": "0A3A99D373970621B0DC9CB953C7C183F5F5848C95BC4BEBC6B3F8FC80588D24"
+    },
+    {
+      "path": "research/results/api_efficiency.json",
+      "size_bytes": 165,
+      "sha256": "BF8961784A34E65424BECE8F13027FB8EA8BFEDC0B70B0167DFF7771359D5BC7"
+    },
+    {
+      "path": "research/results/baseline_comparison.svg",
+      "size_bytes": 3869,
+      "sha256": "5D32C2596060401ACA09EA1659A1E055A8091E553D0F6219D34B252952563061"
+    },
+    {
+      "path": "research/results/baseline_results.csv",
+      "size_bytes": 807,
+      "sha256": "DE63512D06FE44296685E933C88512575A2817915C782471039BE61EEA77B74C"
+    },
+    {
+      "path": "research/results/confidence_intervals.csv",
+      "size_bytes": 6184,
+      "sha256": "800E295AA46A78307FB519385928FD39523A84AC6D41DCED975B213C272FC34D"
+    },
+    {
+      "path": "research/results/confusion_deployed_random_forest_v2__reference_only.svg",
+      "size_bytes": 1777,
+      "sha256": "3372452977E24D91E122AE87458B03F4713BC157AD3836BCB57BC603BFAF71BC"
+    },
+    {
+      "path": "research/results/confusion_extra_trees.svg",
+      "size_bytes": 1740,
+      "sha256": "FF12A5A842F7A25BC338599298744E29C8655D08D60E3A70BE94EE2EEDC748F3"
+    },
+    {
+      "path": "research/results/confusion_histogram_gradient_boosting.svg",
+      "size_bytes": 1757,
+      "sha256": "B2549BE6985D5B473056350BE9209571B468D5CF2FD729678CEB67FC5969937F"
+    },
+    {
+      "path": "research/results/confusion_logistic_regression.svg",
+      "size_bytes": 1748,
+      "sha256": "29CEB02CC80D77CEAF0CB4A45CE208ED1A436A92D288FB7F5BD23925BAB7D972"
+    },
+    {
+      "path": "research/results/confusion_random_forest__matched_research_refit.svg",
+      "size_bytes": 1767,
+      "sha256": "09805AD155BB65F802BC097A1B589B486B31F2B79FD04788FFB70453E0C0AC91"
+    },
+    {
+      "path": "research/results/deployed_v2_reference.csv",
+      "size_bytes": 270,
+      "sha256": "A80D7C676171C0C7EC7A928993C828CC0D867B19C1FC59452D0F95C7CB03BF95"
+    },
+    {
+      "path": "research/results/efficiency.csv",
+      "size_bytes": 1929,
+      "sha256": "2BD29DBD9281F7BFB239394C252BD778BC45117605C1AA05BEDFC2605A7D646E"
+    },
+    {
+      "path": "research/results/inference_resource_benchmark.md",
+      "size_bytes": 3618,
+      "sha256": "BE0DD3441CC90C5B822DEEC7296A8FA9D0A4A1C93EE8D4D6DB25D32AA8E413AD"
+    },
+    {
+      "path": "research/results/report.md",
+      "size_bytes": 4831,
+      "sha256": "9320B06788B025AE9323434D7AC44A8F13B5C08C5DA823BCEE178F8D4E9CE4D0"
+    },
+    {
+      "path": "research/results/run_metadata.json",
+      "size_bytes": 9323,
+      "sha256": "C923A79889D50761491CE3012A248E5C4826724F79820F887595ACD8459C451B"
+    },
+    {
+      "path": "research/results/run_metadata_submission.json",
+      "size_bytes": 9323,
+      "sha256": "C923A79889D50761491CE3012A248E5C4826724F79820F887595ACD8459C451B"
+    },
+    {
+      "path": "research/results/shap_beeswarm.svg",
+      "size_bytes": 291357,
+      "sha256": "C312D19903FA31840CE294217B2A64E339CCD00B56D1EB65F08621A65CD784AC"
+    },
+    {
+      "path": "research/results/shap_global_importance.svg",
+      "size_bytes": 3531,
+      "sha256": "11E5DA16C51044CB8D2C4E63E79CADFD6DEC7F9E754B77B68F60E90B84694F9A"
+    },
+    {
+      "path": "research/results/shap_importance.csv",
+      "size_bytes": 2986,
+      "sha256": "FC91B0E244DD6C70B21C0273A6E2249143A31B65656F75EEB7FBCF26EABEF9D1"
+    },
+    {
+      "path": "docs/final_year_research_evaluation.md",
+      "size_bytes": 5875,
+      "sha256": "613423C0842352AA2C2FDFA936EB8689FB0706961B83E63CE8D1EAB4D0468FF2"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 7979,
+      "sha256": "134F324C9961F1EB2B77BC15B3EBA6CCFC9D7E041496179A45ABA56087A35493"
+    }
+  ]
+}

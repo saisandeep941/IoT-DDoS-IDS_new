@@ -1,0 +1,74 @@
+{
+  "template_status": "prospective_template_only",
+  "historical_run_record": false,
+  "warning": "This is an empty template for a future run. Do not populate it with estimates and present them as historical V2 provenance.",
+  "run": {
+    "run_id": null,
+    "purpose": null,
+    "created_utc": null,
+    "status": "not_recorded",
+    "operator_or_pipeline_id": null
+  },
+  "dataset": {
+    "name": null,
+    "version_or_release": null,
+    "publisher": null,
+    "source_url_or_archive_reference": null,
+    "license_reference": null,
+    "label_definition_and_mapping": null,
+    "raw_files": [],
+    "exported_files": [],
+    "capture_or_session_identifiers_available": null
+  },
+  "feature_generation": {
+    "extractor_name": null,
+    "source_repository": null,
+    "source_revision": null,
+    "release_or_build": null,
+    "binary_sha256": null,
+    "configuration_path_and_sha256": null,
+    "command_or_invocation": null,
+    "post_export_code_hashes": [],
+    "feature_semantics_reference": null
+  },
+  "model_inputs": {
+    "ordered_feature_names": [],
+    "ordered_schema_sha256": null,
+    "feature_types_units_and_definitions_reference": null,
+    "preprocessing_code_sha256": null,
+    "missing_value_and_infinity_policy": null,
+    "label_column_and_mapping": null
+  },
+  "training": {
+    "input_file_hashes_and_order": [],
+    "trainer_code_sha256": null,
+    "runtime_versions": {},
+    "sampling_algorithm_and_parameters": null,
+    "random_seeds": {},
+    "source_row_identity_method": null,
+    "selected_row_manifest_path_and_sha256": null,
+    "train_test_split_method_and_parameters": null,
+    "split_membership_path_and_sha256": null,
+    "model_configuration": null,
+    "output_model_path_and_sha256": null
+  },
+  "evaluation": {
+    "dataset_run_id": null,
+    "evaluation_script_sha256": null,
+    "runtime_versions": {},
+    "feature_compatibility_check_path_and_sha256": null,
+    "label_validation_path_and_sha256": null,
+    "training_evaluation_overlap_method": null,
+    "overlap_counts_and_evidence_path": null,
+    "metrics_path_and_sha256": null,
+    "confusion_matrix_path_and_sha256": null,
+    "inference_timing_method": null
+  },
+  "integrity": {
+    "manifest_sha256_recorded_after_completion": null,
+    "artifact_hashes_verified": false,
+    "verification_tool_and_version": null
+  },
+  "limitations": [],
+  "unresolved_items": []
+}

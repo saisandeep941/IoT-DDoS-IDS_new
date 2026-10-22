@@ -1,0 +1,106 @@
+[
+  {
+    "model": "dummy_majority",
+    "accuracy": 0.5891574060249273,
+    "precision_attack": 0.0,
+    "recall_attack": 0.0,
+    "f1_attack": 0.0,
+    "confusion_matrix": [
+      [
+        414322,
+        0
+      ],
+      [
+        288923,
+        0
+      ]
+    ],
+    "tn": 414322,
+    "fp": 0,
+    "fn": 288923,
+    "tp": 0,
+    "training_seconds": 0.16376799996942282,
+    "test_inference_seconds": 0.46455609996337444,
+    "test_inference_ms_per_row": 0.000660589268268348,
+    "test_rows": 703245,
+    "decision_convention": "sklearn estimator.predict; binary classes 0=BENIGN, 1=ATTACK"
+  },
+  {
+    "model": "logistic_regression",
+    "accuracy": 0.729445641277222,
+    "precision_attack": 0.8716986534650482,
+    "recall_attack": 0.4003973376989717,
+    "f1_attack": 0.5487413254149334,
+    "confusion_matrix": [
+      [
+        397295,
+        17027
+      ],
+      [
+        173239,
+        115684
+      ]
+    ],
+    "tn": 397295,
+    "fp": 17027,
+    "fn": 173239,
+    "tp": 115684,
+    "training_seconds": 0.5990716000087559,
+    "test_inference_seconds": 0.767185400123708,
+    "test_inference_ms_per_row": 0.0010909219406091872,
+    "test_rows": 703245,
+    "decision_convention": "sklearn estimator.predict; binary classes 0=BENIGN, 1=ATTACK"
+  },
+  {
+    "model": "random_forest",
+    "accuracy": 0.7037618468670236,
+    "precision_attack": 0.9887566859513154,
+    "recall_attack": 0.2821582220868536,
+    "f1_attack": 0.4390314832566806,
+    "confusion_matrix": [
+      [
+        413395,
+        927
+      ],
+      [
+        207401,
+        81522
+      ]
+    ],
+    "tn": 413395,
+    "fp": 927,
+    "fn": 207401,
+    "tp": 81522,
+    "training_seconds": 0.46555359999183565,
+    "test_inference_seconds": 1.7514150000642985,
+    "test_inference_ms_per_row": 0.0024904762921375886,
+    "test_rows": 703245,
+    "decision_convention": "sklearn estimator.predict; binary classes 0=BENIGN, 1=ATTACK"
+  },
+  {
+    "model": "extra_trees",
+    "accuracy": 0.6985218522705459,
+    "precision_attack": 0.9868337764273959,
+    "recall_attack": 0.26979506650560875,
+    "f1_attack": 0.42374148236131914,
+    "confusion_matrix": [
+      [
+        413282,
+        1040
+      ],
+      [
+        210973,
+        77950
+      ]
+    ],
+    "tn": 413282,
+    "fp": 1040,
+    "fn": 210973,
+    "tp": 77950,
+    "training_seconds": 0.37842810002621263,
+    "test_inference_seconds": 1.9629125996725634,
+    "test_inference_ms_per_row": 0.0027912215510562653,
+    "test_rows": 703245,
+    "decision_convention": "sklearn estimator.predict; binary classes 0=BENIGN, 1=ATTACK"
+  }
+]

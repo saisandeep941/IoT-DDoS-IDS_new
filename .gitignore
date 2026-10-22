@@ -1,0 +1,37 @@
+
+# Python virtual environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Temporary test output
+.test-tmp/
+
+# Dataset files
+application/dataset/
+dataset/
+datasets/
+*.pcap
+*.pcapng
+
+# Submission archive
+IoT-DDoS-IDS-Submission.zip
+
+# Frontend dependencies and build output
+node_modules/
+application/frontend/node_modules/
+application/frontend/dist/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db

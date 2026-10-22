@@ -1,0 +1,231 @@
+{
+  "completed_stages": {
+    "api_efficiency": {
+      "checkpoint": "checkpoints\\api_efficiency.pkl",
+      "completed_utc": "2026-10-17T11:48:53.098868+05:30"
+    },
+    "baseline_extra_trees": {
+      "checkpoint": "checkpoints\\baseline_extra_trees.pkl",
+      "completed_utc": "2026-10-17T11:47:25.585188+05:30"
+    },
+    "baseline_histogram_gradient_boosting": {
+      "checkpoint": "checkpoints\\baseline_histogram_gradient_boosting.pkl",
+      "completed_utc": "2026-10-17T11:47:48.245888+05:30"
+    },
+    "baseline_logistic_regression": {
+      "checkpoint": "checkpoints\\baseline_logistic_regression.pkl",
+      "completed_utc": "2026-10-17T11:48:17.078102+05:30"
+    },
+    "baseline_random_forest__matched_research_refit": {
+      "checkpoint": "checkpoints\\baseline_random_forest__matched_research_refit.pkl",
+      "completed_utc": "2026-10-17T11:46:58.829088+05:30"
+    },
+    "deployed_v2_reference": {
+      "checkpoint": "checkpoints\\deployed_v2_reference.pkl",
+      "completed_utc": "2026-10-17T11:48:53.091059+05:30"
+    },
+    "final_artifacts_written": {
+      "checkpoint": "partial/",
+      "completed_utc": "2026-10-17T11:48:54.192362+05:30"
+    },
+    "holdout": {
+      "checkpoint": "checkpoints\\holdout_memmap/",
+      "completed_utc": "2026-10-17T11:29:33.882447+05:30"
+    },
+    "shap": {
+      "checkpoint": "checkpoints\\shap_values.pkl",
+      "completed_utc": "2026-10-17T11:48:53.598279+05:30"
+    },
+    "training_sampling": {
+      "checkpoint": "checkpoints\\training_sample.pkl",
+      "completed_utc": "2026-10-17T11:46:35.094797+05:30"
+    }
+  },
+  "context": {
+    "code_sha256": {
+      "evaluate_research.py": "9fcc7358ece2991570ac1142b9d99ae1cc2d21104f322e1f6693b927a13160d6",
+      "research_eval_protocol.py": "11880251b19b5aa623c1fba27e56281bc25e56a10e9e2006ad270046639fa3db"
+    },
+    "configuration": {
+      "api_url": null,
+      "batch_repeats": 3,
+      "bootstrap_replicates": 500,
+      "bootstrap_seed": 2026,
+      "chunk_size": 50000,
+      "cluster_bootstrap_replicates": 250,
+      "gap_seconds": 60,
+      "latency_repeats": 500,
+      "latency_warmups": 20,
+      "max_per_class": 10000,
+      "seed": 42
+    },
+    "feature_count": 82,
+    "feature_file_sha256": "c49933abe8df5a693915bd788153bcb7302d75aab486a65e6b07e0a1abcc3e28",
+    "feature_schema": [
+      "Source Port",
+      "Destination Port",
+      "Protocol",
+      "Flow Duration",
+      "Total Fwd Packets",
+      "Total Backward Packets",
+      "Total Length of Fwd Packets",
+      "Total Length of Bwd Packets",
+      "Fwd Packet Length Max",
+      "Fwd Packet Length Min",
+      "Fwd Packet Length Mean",
+      "Fwd Packet Length Std",
+      "Bwd Packet Length Max",
+      "Bwd Packet Length Min",
+      "Bwd Packet Length Mean",
+      "Bwd Packet Length Std",
+      "Flow Bytes/s",
+      "Flow Packets/s",
+      "Flow IAT Mean",
+      "Flow IAT Std",
+      "Flow IAT Max",
+      "Flow IAT Min",
+      "Fwd IAT Total",
+      "Fwd IAT Mean",
+      "Fwd IAT Std",
+      "Fwd IAT Max",
+      "Fwd IAT Min",
+      "Bwd IAT Total",
+      "Bwd IAT Mean",
+      "Bwd IAT Std",
+      "Bwd IAT Max",
+      "Bwd IAT Min",
+      "Fwd PSH Flags",
+      "Bwd PSH Flags",
+      "Fwd URG Flags",
+      "Bwd URG Flags",
+      "Fwd Header Length",
+      "Bwd Header Length",
+      "Fwd Packets/s",
+      "Bwd Packets/s",
+      "Min Packet Length",
+      "Max Packet Length",
+      "Packet Length Mean",
+      "Packet Length Std",
+      "Packet Length Variance",
+      "FIN Flag Count",
+      "SYN Flag Count",
+      "RST Flag Count",
+      "PSH Flag Count",
+      "ACK Flag Count",
+      "URG Flag Count",
+      "CWE Flag Count",
+      "ECE Flag Count",
+      "Down/Up Ratio",
+      "Average Packet Size",
+      "Avg Fwd Segment Size",
+      "Avg Bwd Segment Size",
+      "Fwd Header Length.1",
+      "Fwd Avg Bytes/Bulk",
+      "Fwd Avg Packets/Bulk",
+      "Fwd Avg Bulk Rate",
+      "Bwd Avg Bytes/Bulk",
+      "Bwd Avg Packets/Bulk",
+      "Bwd Avg Bulk Rate",
+      "Subflow Fwd Packets",
+      "Subflow Fwd Bytes",
+      "Subflow Bwd Packets",
+      "Subflow Bwd Bytes",
+      "Init_Win_bytes_forward",
+      "Init_Win_bytes_backward",
+      "act_data_pkt_fwd",
+      "min_seg_size_forward",
+      "Active Mean",
+      "Active Std",
+      "Active Max",
+      "Active Min",
+      "Idle Mean",
+      "Idle Std",
+      "Idle Max",
+      "Idle Min",
+      "SimillarHTTP",
+      "Inbound"
+    ],
+    "git_branch": "codex/research-evaluation-fixes",
+    "git_revision": "dcadb000727a74836f2877dd7a7aa80afa4ccd66",
+    "input_fingerprints": {
+      "DrDoS_DNS.csv": {
+        "mtime_ns": 1791773492392596200,
+        "path": ".\\dataset\\01-12\\DrDoS_DNS.csv",
+        "size_bytes": 2133307948
+      },
+      "DrDoS_LDAP.csv": {
+        "mtime_ns": 1791773485440132300,
+        "path": ".\\dataset\\01-12\\DrDoS_LDAP.csv",
+        "size_bytes": 917302277
+      },
+      "DrDoS_MSSQL.csv": {
+        "mtime_ns": 1791773477986296800,
+        "path": ".\\dataset\\01-12\\DrDoS_MSSQL.csv",
+        "size_bytes": 1889181756
+      },
+      "DrDoS_NTP.csv": {
+        "mtime_ns": 1791773461630421800,
+        "path": ".\\dataset\\01-12\\DrDoS_NTP.csv",
+        "size_bytes": 645008606
+      },
+      "DrDoS_NetBIOS.csv": {
+        "mtime_ns": 1791773469576441600,
+        "path": ".\\dataset\\01-12\\DrDoS_NetBIOS.csv",
+        "size_bytes": 1697479829
+      },
+      "DrDoS_SNMP.csv": {
+        "mtime_ns": 1791773458622418100,
+        "path": ".\\dataset\\01-12\\DrDoS_SNMP.csv",
+        "size_bytes": 2172579815
+      },
+      "DrDoS_SSDP.csv": {
+        "mtime_ns": 1791773451320419300,
+        "path": ".\\dataset\\01-12\\DrDoS_SSDP.csv",
+        "size_bytes": 1252686219
+      },
+      "DrDoS_UDP.csv": {
+        "mtime_ns": 1791773442288598500,
+        "path": ".\\dataset\\01-12\\DrDoS_UDP.csv",
+        "size_bytes": 1506039371
+      },
+      "Syn.csv": {
+        "mtime_ns": 1791773436255677000,
+        "path": ".\\dataset\\01-12\\Syn.csv",
+        "size_bytes": 637312127
+      },
+      "TFTP.csv": {
+        "mtime_ns": 1791773433802621700,
+        "path": ".\\dataset\\01-12\\TFTP.csv",
+        "size_bytes": 9302011115
+      },
+      "UDPLag.csv": {
+        "mtime_ns": 1791773388740019800,
+        "path": ".\\dataset\\01-12\\UDPLag.csv",
+        "size_bytes": 157968770
+      }
+    },
+    "model_sha256": "61af42be7f2b079e4bf6fe8d766373cd1d2f91966b28e6bf722810de53f4d9d2"
+  },
+  "created_utc": "2026-10-17T11:29:26.254874+05:30",
+  "results_directory": "results",
+  "state": "COMPLETE",
+  "updated_utc": "2026-10-17T11:48:54.200176+05:30",
+  "verified_outputs": [
+    "baseline_results.csv",
+    "deployed_v2_reference.csv",
+    "confidence_intervals.csv",
+    "efficiency.csv",
+    "api_efficiency.json",
+    "report.md",
+    "run_metadata.json",
+    "baseline_comparison.svg",
+    "shap_global_importance.svg",
+    "shap_beeswarm.svg",
+    "shap_importance.csv",
+    "confusion_random_forest__matched_research_refit.svg",
+    "confusion_extra_trees.svg",
+    "confusion_histogram_gradient_boosting.svg",
+    "confusion_logistic_regression.svg",
+    "confusion_deployed_random_forest_v2__reference_only.svg"
+  ]
+}

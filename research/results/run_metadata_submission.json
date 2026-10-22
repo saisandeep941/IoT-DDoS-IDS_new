@@ -1,0 +1,258 @@
+{
+  "seed": 42,
+  "bootstrap_seed": 2026,
+  "bootstrap_replicates": 500,
+  "tuple_cluster_bootstrap_replicates": 250,
+  "chunk_size": 50000,
+  "max_training_rows_per_class": 10000,
+  "feature_count": 82,
+  "git": {
+    "revision": "dcadb000727a74836f2877dd7a7aa80afa4ccd66",
+    "branch": "codex/research-evaluation-fixes",
+    "working_tree_dirty": true,
+    "working_tree_status": "M backend/main.py\n M frontend/src/App.jsx\n?? docs/\n?? ml/evaluate_research.py\n?? ml/research_eval_protocol.py\n?? ml/research_results/\n?? ml/test_detection_history.py\n?? ml/test_research_evaluation.py"
+  },
+  "software_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0",
+    "shap": "0.53.0",
+    "matplotlib": null,
+    "python": "3.14.6"
+  },
+  "hardware": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "logical_cpu_count": 16,
+    "physical_memory_bytes": null,
+    "physical_cpu_count": null
+  },
+  "dataset_sha256": {
+    "DrDoS_DNS.csv": {
+      "rows": 5074413,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T10:51:39.813448+00:00",
+      "end_utc": "2018-12-01T11:22:40.254719+00:00",
+      "sha256": "eee1a2cf10be29129f00930e250236c237b97d2941e8cea766006db82047df83"
+    },
+    "DrDoS_LDAP.csv": {
+      "rows": 2181542,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T11:22:40.254769+00:00",
+      "end_utc": "2018-12-01T11:32:32.915361+00:00",
+      "sha256": "fbc836bfb01d9eb5f5a2b4aae3428d7c17f449ede5466273249a9ce6095338b0"
+    },
+    "DrDoS_MSSQL.csv": {
+      "rows": 4524498,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T11:32:32.915441+00:00",
+      "end_utc": "2018-12-01T11:47:08.463107+00:00",
+      "sha256": "534ebd8bb98a571b6e0a65a65091cb22b09156fa4db82e5752a92df02ea5402b"
+    },
+    "DrDoS_NetBIOS.csv": {
+      "rows": 4094986,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T11:47:08.463789+00:00",
+      "end_utc": "2018-12-01T12:00:13.902732+00:00",
+      "sha256": "b0dbf6d712a021380cade45f753531a5860d0bfd4d338b4013ea5566d968329e"
+    },
+    "DrDoS_NTP.csv": {
+      "rows": 1217007,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T09:17:11.183810+00:00",
+      "end_utc": "2018-12-01T10:51:39.778786+00:00",
+      "sha256": "b4ae33b2a22975f2c4c8b0e2bfc501fee38dae274dca37d4b01010de059c9c2c"
+    },
+    "DrDoS_SNMP.csv": {
+      "rows": 5161377,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T12:00:13.902782+00:00",
+      "end_utc": "2018-12-01T12:23:13.663368+00:00",
+      "sha256": "a74a411a37fbb1a4d4acd20bb8a7e93714992e34d9fb08b3b2c5e1795c867eb7"
+    },
+    "DrDoS_SSDP.csv": {
+      "rows": 2611374,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T12:23:13.663425+00:00",
+      "end_utc": "2018-12-01T12:36:57.627789+00:00",
+      "sha256": "0bc1a2bb6dbef3851b7a2177ef74bd801dcf592b69ef5bbe5044821e695423c1"
+    },
+    "DrDoS_UDP.csv": {
+      "rows": 3136802,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T12:36:57.628026+00:00",
+      "end_utc": "2018-12-01T13:04:45.928382+00:00",
+      "sha256": "85c54bf54f987586e1d8da14b76d1167baa4636755cae24e648067e5242d679a"
+    },
+    "Syn.csv": {
+      "rows": 1582681,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T13:30:30.741451+00:00",
+      "end_utc": "2018-12-01T13:34:27.403143+00:00",
+      "sha256": "05a272a7005be14262d3929ad16877db42fc74a03032a3a5b58d0230ab08896a"
+    },
+    "TFTP.csv": {
+      "rows": 20107827,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T13:34:27.403713+00:00",
+      "end_utc": "2018-12-01T17:16:38.374659+00:00",
+      "sha256": "b56314cca3f68c9027e9fa684c7c565df6fc5c510c87f12b1c00390364e44d7c"
+    },
+    "UDPLag.csv": {
+      "sha256": "f67708a8462509932759ffed7eb92dca0f423267609d1be38a461708d4ea5b7e",
+      "rows": 370605,
+      "invalid_timestamps": 0,
+      "invalid_tuple_keys": 0,
+      "start_utc": "2018-12-01T13:04:45.928673+00:00",
+      "end_utc": "2018-12-01T13:30:30.740425+00:00"
+    }
+  },
+  "model_sha256": "61af42be7f2b079e4bf6fe8d766373cd1d2f91966b28e6bf722810de53f4d9d2",
+  "feature_file_sha256": "c49933abe8df5a693915bd788153bcb7302d75aab486a65e6b07e0a1abcc3e28",
+  "code_sha256": {
+    "evaluate_research.py": "9fcc7358ece2991570ac1142b9d99ae1cc2d21104f322e1f6693b927a13160d6",
+    "research_eval_protocol.py": "11880251b19b5aa623c1fba27e56281bc25e56a10e9e2006ad270046639fa3db"
+  },
+  "input_fingerprints": {
+    "DrDoS_DNS.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_DNS.csv",
+      "size_bytes": 2133307948,
+      "mtime_ns": 1791773492392596200
+    },
+    "DrDoS_LDAP.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_LDAP.csv",
+      "size_bytes": 917302277,
+      "mtime_ns": 1791773485440132300
+    },
+    "DrDoS_MSSQL.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_MSSQL.csv",
+      "size_bytes": 1889181756,
+      "mtime_ns": 1791773477986296800
+    },
+    "DrDoS_NetBIOS.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_NetBIOS.csv",
+      "size_bytes": 1697479829,
+      "mtime_ns": 1791773469576441600
+    },
+    "DrDoS_NTP.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_NTP.csv",
+      "size_bytes": 645008606,
+      "mtime_ns": 1791773461630421800
+    },
+    "DrDoS_SNMP.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_SNMP.csv",
+      "size_bytes": 2172579815,
+      "mtime_ns": 1791773458622418100
+    },
+    "DrDoS_SSDP.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_SSDP.csv",
+      "size_bytes": 1252686219,
+      "mtime_ns": 1791773451320419300
+    },
+    "DrDoS_UDP.csv": {
+      "path": ".\\dataset\\01-12\\DrDoS_UDP.csv",
+      "size_bytes": 1506039371,
+      "mtime_ns": 1791773442288598500
+    },
+    "Syn.csv": {
+      "path": ".\\dataset\\01-12\\Syn.csv",
+      "size_bytes": 637312127,
+      "mtime_ns": 1791773436255677000
+    },
+    "TFTP.csv": {
+      "path": ".\\dataset\\01-12\\TFTP.csv",
+      "size_bytes": 9302011115,
+      "mtime_ns": 1791773433802621700
+    },
+    "UDPLag.csv": {
+      "path": ".\\dataset\\01-12\\UDPLag.csv",
+      "size_bytes": 157968770,
+      "mtime_ns": 1791773388740019800
+    }
+  },
+  "split": {
+    "strategy": "forward time block plus 60-second pre-test gap and global canonical 5-tuple purge",
+    "tuple_id_storage": "SHA-256 hex of the direction-independent canonical IP/port/protocol tuple",
+    "test_file": "dataset\\01-12\\UDPLag.csv",
+    "training_files": [
+      "dataset\\01-12\\DrDoS_DNS.csv",
+      "dataset\\01-12\\DrDoS_LDAP.csv",
+      "dataset\\01-12\\DrDoS_MSSQL.csv",
+      "dataset\\01-12\\DrDoS_NetBIOS.csv",
+      "dataset\\01-12\\DrDoS_NTP.csv",
+      "dataset\\01-12\\DrDoS_SNMP.csv",
+      "dataset\\01-12\\DrDoS_SSDP.csv",
+      "dataset\\01-12\\DrDoS_UDP.csv",
+      "dataset\\01-12\\Syn.csv",
+      "dataset\\01-12\\TFTP.csv"
+    ],
+    "test_start_utc_assumption": "2018-12-01T13:04:45.928673+00:00",
+    "test_end_utc_assumption": "2018-12-01T13:30:30.740425+00:00",
+    "training_cutoff_utc_assumption": "2018-12-01T13:03:45.928673+00:00",
+    "later_training_rows_used": false,
+    "tuple_disjoint": true
+  },
+  "training": {
+    "rows_scanned": 49692507,
+    "eligible_class_counts": {
+      "0": 25949,
+      "1": 27585958
+    },
+    "sampled_class_counts": {
+      "0": 10000,
+      "1": 10000
+    },
+    "rows_before_gap": 27623978,
+    "rows_after_gap_and_group_purge": 27611907,
+    "rows_removed_for_tuple_overlap": 12071,
+    "rows_removed_for_invalid_tuple": 0,
+    "invalid_timestamps": 0,
+    "invalid_tuple_keys": 0,
+    "gap_seconds": 60,
+    "test_start_ns": 1543669485928673000,
+    "training_cutoff_ns": 1543669425928673000
+  },
+  "holdout": {
+    "rows": 370605,
+    "class_counts": {
+      "BENIGN": 3705,
+      "ATTACK": 366900
+    },
+    "natural_prevalence": true
+  },
+  "benchmark": {
+    "warmup_calls": 20,
+    "single_row_repeats": 500,
+    "full_test_batch_repeats": 3,
+    "api_url": null,
+    "api_result": {
+      "status": "NOT RUN: provide --api-url for a separately running backend",
+      "scope": "API latency is not inferred from model-only timing or batch throughput"
+    }
+  },
+  "limitations": [
+    "No capture/session IDs or PCAPs are available.",
+    "Source timestamps are timezone-naive; UTC is assumed for comparable intervals.",
+    "Global tuple purging can exclude legitimate later reuse of a 5-tuple.",
+    "Tuple-cluster bootstrap is a proxy and cannot represent capture-level uncertainty."
+  ],
+  "saved_v2_model_modified": false,
+  "saved_v2_feature_file_modified": false,
+  "resume_used": false,
+  "reused_holdout_checkpoint": false,
+  "reused_training_checkpoint": false,
+  "reused_v2_reference_checkpoint": false,
+  "reused_api_checkpoint": false,
+  "reused_shap_checkpoint": false
+}

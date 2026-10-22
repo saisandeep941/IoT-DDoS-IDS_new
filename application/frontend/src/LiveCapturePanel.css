@@ -1,0 +1,17 @@
+.live-capture-panel{background:#fff;border:1px solid #dfe5ec;border-radius:14px;padding:24px;color:#1b2634}.live-capture-panel header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.live-capture-panel h2{margin:0 0 8px}.live-capture-panel p{color:#657487}.capture-state{padding:6px 12px;border-radius:20px;background:#edf1f5;text-transform:capitalize}.capture-state.running{background:#e2f6ec;color:#147448}.capture-state.error,.capture-error{color:#a12b2b}.capture-controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:20px 0}.capture-controls label{display:grid;gap:6px;min-width:250px}.capture-controls select,.capture-controls button{min-height:40px;padding:8px 12px;border:1px solid #cbd5df;border-radius:7px;background:#fff}.capture-controls button{cursor:pointer;background:#1e4a71;color:white}.capture-controls button:disabled{opacity:.5;cursor:not-allowed}.capture-metrics{display:flex;gap:16px;flex-wrap:wrap}.capture-metrics div{min-width:130px;background:#f5f7fa;border-radius:9px;padding:14px;display:grid;gap:4px}.capture-metrics b{font-size:22px}.capture-metrics span,.live-capture-panel small{color:#657487}.capture-table-wrap{overflow:auto;max-height:350px}.live-capture-panel table{width:100%;border-collapse:collapse}.live-capture-panel th,.live-capture-panel td{text-align:left;padding:9px;border-bottom:1px solid #edf0f3;white-space:nowrap}.live-capture-panel small{display:block;margin-top:14px}
+.live-capture-panel table{background:#f7f9fc;border:1px solid #dfe5ec;border-radius:8px;overflow:hidden}
+.live-capture-panel thead{background:#26384b;color:#fff}
+.live-capture-panel thead th{border-bottom:1px solid #405267;color:#fff;font-weight:600}
+.live-capture-panel tbody tr{background:#f7f9fc;transition:background-color .15s ease}
+.live-capture-panel tbody td{color:#243244;border-bottom:1px solid #e1e7ee}
+.live-capture-panel tbody tr:hover{background:#e9f0f7}
+.flow-telemetry{margin-top:26px;padding-top:20px;border-top:1px solid #dfe5ec}
+.flow-telemetry-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.flow-telemetry-heading h3{margin:0 0 6px}
+.flow-telemetry-heading p{margin:0 0 14px}
+.flow-state{flex:none;padding:5px 10px;border-radius:16px;background:#edf1f5;color:#44556a;text-transform:capitalize}
+.flow-state.ready{background:#e2f6ec;color:#147448}
+.flow-state.error{background:#fae9e9;color:#a12b2b}
+.flow-table-wrap{margin-top:10px}
+.flow-table-wrap th,.flow-table-wrap td{font-size:13px}
+@media (max-width:700px){.flow-telemetry-heading{flex-direction:column;gap:4px}.flow-table-wrap{max-height:300px}}
