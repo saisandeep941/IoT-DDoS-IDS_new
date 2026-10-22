@@ -7,12 +7,16 @@ import tempfile
 import uuid
 import csv
 import json
+import importlib.util
+import hmac
+from functools import lru_cache
+from contextlib import asynccontextmanager
 from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import joblib
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File, HTTPException
 from sklearn.metrics import confusion_matrix, classification_report
@@ -20,7 +24,7 @@ from datetime import datetime, timezone
 from collections import deque
 from datetime import datetime, timezone
 from threading import Lock
-from itertools import count
+from backend.detection_history import DetectionHistoryStore
 from backend.dataset_validation import (
     DatasetSchemaError,
     validate_ground_truth_labels,
@@ -28,24 +32,92 @@ from backend.dataset_validation import (
 )
 
 
-app = FastAPI(title="SentinelAI API")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+V3_DIR = PROJECT_ROOT / "model_v3"
+V31_RESULTS_DIR = PROJECT_ROOT / "research" / "results_v31"
+V2_SCHEMA_PATH = Path(__file__).resolve().parent / "real_model_features_v2.joblib"
+
+
+@lru_cache(maxsize=1)
+def _isotonic_mapping():
+    try:
+        return json.loads((V31_RESULTS_DIR / "isotonic_calibrator.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def calibrate_attack_probability(probability):
+    """Apply the saved isotonic mapping; retain raw probability for fixed labels."""
+    mapping = _isotonic_mapping()
+    if mapping is None:
+        return float(probability)
+    return float(np.interp(float(probability), mapping["x_thresholds"], mapping["y_thresholds"]))
+
+
+def load_v3_model():
+    """Load the version-independent V3 artifacts through the supplied loader."""
+    loader_path = V3_DIR / "v3_loader.py"
+    spec = importlib.util.spec_from_file_location("project_v3_loader", loader_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load V3 loader from {loader_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.V3Model(folder=str(V3_DIR))
+
+
+def load_v2_schema():
+    """Load only the protected V2 feature names for strict CSV compatibility."""
+    return joblib.load(V2_SCHEMA_PATH)
+
+
+def threshold_for_mode(v3, mode):
+    if mode not in {"balanced", "strict"}:
+        raise HTTPException(status_code=400, detail="mode must be 'balanced' or 'strict'.")
+    point = "balanced_default" if mode == "balanced" else "strict_low_fpr"
+    return float(v3.meta["operating_points"][point]["threshold"])
+
+
+def classify_attack_probability(v3, probability, mode):
+    threshold = threshold_for_mode(v3, mode)
+    return ("Attack" if float(probability) >= threshold else "Benign"), threshold
+
+
+history_store = DetectionHistoryStore()
+detection_records = deque(history_store.latest(), maxlen=history_store.limit)
+detection_history_lock = Lock()
+csv_replay_lock = Lock()
+csv_replay = None
+
+
+@asynccontextmanager
+async def lifespan(_app):
+    history_store.initialize()
+    with detection_history_lock:
+        detection_records.clear()
+        detection_records.extend(history_store.latest())
+    yield
+    capture_controller.shutdown()
+
+
+app = FastAPI(title="SentinelAI API", lifespan=lifespan)
 from backend.capture_routes import router as capture_router, controller as capture_controller
 app.include_router(capture_router)
 
-@app.on_event("shutdown")
-def shutdown_capture_worker():
-    capture_controller.shutdown()
-detection_records = deque(maxlen=500)
-detection_history_lock = Lock()
-detection_id_counter = count(1)
-csv_replay_lock = Lock()
-csv_replay = None
+
+@app.middleware("http")
+async def require_configured_api_key(request: Request, call_next):
+    api_key = os.getenv("SENTINEL_API_KEY")
+    if api_key and request.url.path != "/api/health" and request.method != "OPTIONS":
+        supplied = request.headers.get("X-API-Key", "")
+        if not hmac.compare_digest(supplied, api_key):
+            from starlette.responses import JSONResponse
+            return JSONResponse(status_code=401, content={"detail": "A valid X-API-Key is required."})
+    return await call_next(request)
 
 
 def append_detection(prediction, risk_score, severity, source, **metadata):
     with detection_history_lock:
         record = {
-            "id": next(detection_id_counter),
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "prediction": prediction,
             "risk_score": round(float(risk_score), 2),
@@ -53,11 +125,12 @@ def append_detection(prediction, risk_score, severity, source, **metadata):
             "source": source,
         }
         record.update(metadata)
+        record = history_store.append(record)
         detection_records.appendleft(record)
 
 
-def record_detection(prediction, risk_score, severity, source):
-    append_detection(prediction, risk_score, severity, source)
+def record_detection(prediction, risk_score, severity, source, **metadata):
+    append_detection(prediction, risk_score, severity, source, **metadata)
 
 
 def severity_for_risk_score(risk_score):
@@ -156,109 +229,68 @@ class PredictionRequest(BaseModel):
     features: List[float]
 
 @app.post("/api/predict")
-def predict(data: dict):
-    import numpy as np
-    import pandas as pd
-    import joblib
-    from pathlib import Path
-
-    base_dir = Path(__file__).resolve().parent
-    model_path = base_dir / "real_model_v2.joblib"
-    features_path = base_dir / "real_model_features_v2.joblib"
-
-    if not model_path.exists() or not features_path.exists():
-        raise HTTPException(
-            status_code=503,
-            detail="V2 model or feature list not found",
-        )
-
-    pipeline = joblib.load(model_path)
-    feature_names = joblib.load(features_path)
-
+def predict(data: dict, mode: str = "balanced"):
+    v3 = load_v3_model()
+    feature_names = v3.features
     values = data.get("features")
-
     if not isinstance(values, list) or len(values) != len(feature_names):
         raise HTTPException(
             status_code=400,
-            detail=f"Provide exactly {len(feature_names)} numeric features in a 'features' list",
+            detail=f"Provide exactly {len(feature_names)} numeric V3 features in a 'features' list",
         )
-
     try:
-        row = np.array(values, dtype=float)
-
+        row = np.asarray(values, dtype=float)
         if not np.isfinite(row).all():
             raise ValueError("Features must be finite numbers")
-
-        row = pd.DataFrame([row], columns=feature_names)
-
+        frame = pd.DataFrame([row], columns=feature_names)
     except (TypeError, ValueError):
-        raise HTTPException(
-            status_code=400,
-            detail="Features must be finite numeric values",
-        )
+        raise HTTPException(status_code=400, detail="Features must be finite numeric values")
 
-    prediction = int(pipeline.predict(row)[0])
-    probabilities = pipeline.predict_proba(row)[0]
-
-    classes = list(pipeline.classes_)
-    if 1 not in classes:
-        raise HTTPException(
-            status_code=500,
-            detail="The model does not contain the expected attack class.",
-        )
-    attack_index = classes.index(1)
-    risk = float(probabilities[attack_index] * 100)
-
+    probability = float(v3.predict_proba_attack(frame)[0])
+    prediction, threshold = classify_attack_probability(v3, probability, mode)
+    calibrated_probability = calibrate_attack_probability(probability)
+    risk = calibrated_probability * 100
     severity = severity_for_risk_score(risk)
-
     record_detection(
-        prediction="Attack" if prediction == 1 else "Benign",
-        risk_score=risk,
-        severity=severity,
-        source="V2-model API",
+        prediction=prediction, risk_score=risk, severity=severity,
+        source="V3-model API", mode=mode, threshold=threshold,
     )
-
     return {
-        "prediction": "Attack" if prediction == 1 else "Benign",
+        "prediction": prediction,
         "risk_score": round(risk, 2),
+        "attack_probability": probability,
+        "calibrated_attack_probability": calibrated_probability,
         "severity": severity,
-        "model": "Random Forest V2 Pipeline",
+        "model": "XGBoost V3",
         "features_required": len(feature_names),
+        "mode": mode,
+        "threshold": threshold,
+        "severity_note": "Severity cutoffs are provisional, uncalibrated.",
     }
 
 
 
 @app.post("/api/risk-score")
-def calculate_risk_score(request: PredictionRequest):
-    import joblib
-    import numpy as np
-    import pandas as pd
-    from pathlib import Path
-
+def calculate_risk_score(request: PredictionRequest, mode: str = "balanced"):
+    v3 = load_v3_model()
+    threshold = threshold_for_mode(v3, mode)
     features = request.features
 
     if not features:
         return {
             "risk_score": 0,
             "severity": "Unknown",
+            "mode": mode,
+            "threshold": threshold,
             "note": "No features supplied."
         }
 
-    base_dir = Path(__file__).resolve().parent
-    model = joblib.load(base_dir /  "real_model_v2.joblib")
-    feature_names = joblib.load(
-        base_dir / "real_model_features_v2.joblib"
-    )
-    if len(feature_names) != 82 or len(set(feature_names)) != 82:
-        raise HTTPException(
-            status_code=500,
-            detail="Saved model feature list must contain 82 unique features.",
-    )
+    feature_names = v3.features
 
     if len(features) != len(feature_names):
         raise HTTPException(
             status_code=400,
-            detail=f"Expected {len(feature_names)} features, "
+            detail=f"Expected {len(feature_names)} V3 features, "
                    f"received {len(features)}."
         )
 
@@ -272,31 +304,25 @@ def calculate_risk_score(request: PredictionRequest):
 
     X = pd.DataFrame([values], columns=feature_names)
 
-    probabilities = model.predict_proba(X)[0]
-    classes = list(model.classes_)
-
-    if 1 not in classes:
-        raise HTTPException(
-            status_code=500,
-            detail="The model does not contain the expected attack class."
-        )
-
-    attack_probability = float(probabilities[classes.index(1)])
-    raw_risk_score = attack_probability * 100
-    risk_score = round(raw_risk_score)
-
+    attack_probability = float(v3.predict_proba_attack(X)[0])
+    calibrated_probability = calibrate_attack_probability(attack_probability)
+    raw_risk_score = calibrated_probability * 100
+    risk_score = round(raw_risk_score, 2)
     severity = severity_for_risk_score(raw_risk_score)
-    predicted_class = int(model.predict(X)[0])
+    predicted_label, threshold = classify_attack_probability(v3, attack_probability, mode)
 
     return {
         "risk_score": risk_score,
         "attack_probability": round(attack_probability, 4),
-        "predicted_class": "Attack" if predicted_class == 1 else "Benign",
+        "calibrated_attack_probability": round(calibrated_probability, 6),
+        "predicted_class": predicted_label,
         "severity": severity,
+        "mode": mode,
+        "threshold": threshold,
+        "severity_note": "Severity cutoffs are provisional, uncalibrated.",
         "note": (
             "Model-estimated attack probability expressed as a score "
-            "from 0 to 100. Severity thresholds are provisional, "
-            "not independently validated."
+            "from 0 to 100. Severity cutoffs are provisional, uncalibrated."
         )
     }
 
@@ -396,136 +422,78 @@ def train_sample_model():
 
 @app.get("/api/model/status")
 def model_status():
-    base_dir = Path(__file__).resolve().parent
-
-    model_path = base_dir / "real_model_v2.joblib"
-    features_path = base_dir / "real_model_features_v2.joblib"
-
-    model_exists = model_path.exists() and features_path.exists()
-
+    metadata_path = V3_DIR / "v3_metadata.json"
+    required_paths = [
+        metadata_path, V3_DIR / "v3_loader.py", V3_DIR / "v3_xgb_model.json",
+        V3_DIR / "v3_features.json", V3_DIR / "v3_imputer_medians.json",
+    ]
+    model_exists = all(path.is_file() for path in required_paths)
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8")) if model_exists else {}
     return {
         "model_trained": model_exists,
-        "model_name": "Random Forest",
+        "model_name": "XGBoost V3",
+        "active_model": "V3",
         "dataset": "CIC-DDoS2019",
-        "status": "Real model available" if model_exists else "Real model not found"
+        "feature_count": metadata.get("n_features", 47),
+        "trained_on": metadata.get("trained_on", "CIC-DDoS2019 01-12 sample"),
+        "evaluated_on": "CIC-DDoS2019 03-11 sample",
+        "operating_points": metadata.get("operating_points", {}),
+        "limitations": metadata.get("limitations", []),
+        "calibration": _calibration_status(),
+        "v2_reference_only": {"model_name": "Random Forest V2", "status": "reference only"},
+        "status": "V3 model available" if model_exists else "V3 model not found",
     }
+
+
+def _calibration_status():
+    path = V31_RESULTS_DIR / "phase_c_calibration.json"
+    try:
+        results = json.loads(path.read_text(encoding="utf-8"))
+        return {"method": "isotonic", "trained_on": "CIC-DDoS2019 03-11 UDPLag first time half", "evaluation": results["results"]}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {"method": "unavailable"}
 
 
 @app.get("/api/model/explain")
 def explain_model():
-    base_dir = Path(__file__).resolve().parent
-
-    model_path = base_dir / "real_model_v2.joblib"
-    features_path = base_dir / "real_model_features_v2.joblib"
-    dataset_path = (
-        base_dir.parent / "dataset" / "01-12" / "UDPLag.csv"
-    )
-
-    if not model_path.exists() or not features_path.exists():
-        raise HTTPException(
-            status_code=503,
-            detail="V2 model or feature list not found",
-        )
-
-    if not dataset_path.exists():
-        raise HTTPException(
-            status_code=404,
-            detail="UDPLag dataset not found",
-        )
-
-    pipeline = joblib.load(model_path)
-    features = joblib.load(features_path)
-
-    sample = pd.read_csv(dataset_path, nrows=200, low_memory=False)
-    sample.columns = sample.columns.str.strip()
-
     try:
-        validate_model_feature_columns(sample.columns, features)
-    except DatasetSchemaError as error:
-        raise HTTPException(
-            status_code=500,
-            detail=str(error),
-        ) from error
-
-    X = sample.reindex(columns=features)
-    X = X.apply(pd.to_numeric, errors="coerce")
-    X = X.replace([float("inf"), float("-inf")], float("nan"))
-
-    # Use the imputer fitted inside the V2 pipeline.
-    imputer = pipeline.named_steps["imputer"]
-    model = pipeline.named_steps["model"]
-    first_row = X.iloc[[0]]
-    X_imputed = imputer.transform(first_row)
-    predicted_class = int(pipeline.predict(first_row)[0])
-    class_index = list(model.classes_).index(predicted_class)
-
-    try:
-        explainer = shap.TreeExplainer(model)
-        shap_values = explainer.shap_values(X_imputed)
-
-        if isinstance(shap_values, list):
-            values = (
-                shap_values[class_index]
-                if len(shap_values) > class_index
-                else shap_values[0]
-            )
-        elif getattr(shap_values, "ndim", 0) == 3:
-            values = shap_values[:, :, class_index][0]
+        v3 = load_v3_model()
+        frame = pd.DataFrame([v3.medians], columns=v3.features)
+        prepared = v3.prepare(frame)
+        probability = float(v3.predict_proba_attack(frame)[0])
+        explanation = shap.TreeExplainer(v3.model)(prepared)
+        values = np.asarray(explanation.values)
+        if values.ndim == 3:
+            values = values[0, :, 1]
         else:
-            values = shap_values[0]
-
-        values = np.asarray(values).reshape(-1)
-
+            values = values.reshape(-1, len(v3.features))[0]
         importance = [
-            {
-                "feature": name,
-                "impact": round(float(value), 6),
-            }
-            for name, value in zip(features, values)
+            {"feature": name, "impact": round(float(value), 6)}
+            for name, value in zip(v3.features, values)
         ]
-
-        importance.sort(
-            key=lambda item: abs(item["impact"]),
-            reverse=True,
-        )
-
+        importance.sort(key=lambda item: abs(item["impact"]), reverse=True)
         return {
-            "method": "SHAP",
-            "model": "Random Forest V2 Pipeline",
-            "explained_class": "Attack" if predicted_class == 1 else "Benign",
+            "status": "available",
+            "method": "SHAP TreeExplainer",
+            "model": "XGBoost V3",
+            "explained_class": "Attack" if probability >= 0.5 else "Benign",
             "explanation": importance[:15],
-            "note": (
-                "SHAP explanation for the model's predicted class on the first UDPLag sample, "
-                "using the V2 model and its fitted imputer. This is a saved-dataset example, "
-                "not an explanation for the latest dashboard prediction."
-            ),
+            "note": "SHAP values for a median-feature reference profile; they are not causal explanations or a live-flow explanation.",
         }
-
     except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=f"SHAP explanation failed: {str(exc)}",
-        )
+        return {"status": "unavailable", "message": "SHAP explanations unavailable.", "reason": str(exc)}
 
 
 @app.get("/api/model/feature-importance")
 def feature_importance():
-    
-    base_dir = Path(__file__).resolve().parent
-
-    model_path = base_dir / "real_model_v2.joblib"
-    features_path = base_dir / "real_model_features_v2.joblib"
-
-    pipeline = joblib.load(model_path)
-    features = joblib.load(features_path)
-
-    model = pipeline.named_steps["model"]
+    v3 = load_v3_model()
+    model = v3.model
 
     importance = sorted(
         [
             {"feature": name, "importance": float(value)}
             for name, value in zip(
-                features, model.feature_importances_
+                v3.features, model.feature_importances_
             )
         ],
     key=lambda item: item["importance"],
@@ -535,8 +503,8 @@ def feature_importance():
 
     return {
         "feature_importance": importance,
-        "model": "Trained Random Forest",
-        "note": "Feature importance from the trained CIC-DDoS2019 model."
+        "model": "Trained XGBoost V3",
+        "note": "Feature importance from the trained CIC-DDoS2019 V3 model."
     }
 
 
@@ -554,16 +522,12 @@ def get_detection_history():
 
 @app.get("/api/system/summary")
 def system_summary():
-    base_dir = Path(__file__).resolve().parent
-    model_path = base_dir / "real_model_v2.joblib"
-    features_path = base_dir / "real_model_features_v2.joblib"
-
-    model_exists = model_path.exists() and features_path.exists()
+    model_exists = (V3_DIR / "v3_xgb_model.json").is_file()
 
     return {
         "api_status": "healthy",
         "model_trained": model_exists,
-        "model_type": "Random Forest",
+        "model_type": "XGBoost V3 (V2 reference only)",
         "dataset": "CIC-DDoS2019",
         "mode": "real_model" if model_exists else "unavailable"
     }
@@ -571,15 +535,11 @@ def system_summary():
 
 @app.get("/api/system/metrics")
 def system_metrics():
-    base_dir = Path(__file__).resolve().parent
-    model_path = base_dir / "real_model_v2.joblib"
-    features_path = base_dir / "real_model_features_v2.joblib"
-
-    model_exists = model_path.exists() and features_path.exists()
+    model_exists = (V3_DIR / "v3_xgb_model.json").is_file()
 
     return {
         "api_status": "healthy",
-        "model": "Random Forest" if model_exists else "Unavailable",
+        "model": "XGBoost V3" if model_exists else "Unavailable",
         "dataset": "CIC-DDoS2019" if model_exists else "Unavailable",
         "mode": "real_model" if model_exists else "unavailable"
     }
@@ -702,7 +662,7 @@ def project_info():
     return {
         "title": "Intelligent Machine Learning-Based Intrusion Detection System for DDoS Attacks in IoT Networks",
         "dataset": "CIC-DDoS2019",
-        "algorithm": "Random Forest",
+        "algorithm": "XGBoost V3 (V2 reference only)",
         "explainability": "SHAP",
         "frontend": "React",
         "backend": "FastAPI",
@@ -750,20 +710,17 @@ def _iter_prediction_csv(file_obj):
         ) from exc
 
 @app.post("/api/predict/csv")
-async def predict_csv(file: UploadFile = File(...)):
-    import joblib
-    import pandas as pd
-    import numpy as np
-    from pathlib import Path
+async def predict_csv(file: UploadFile = File(...), mode: str = "balanced"):
     from collections import deque
     from sklearn.metrics import confusion_matrix
 
     if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Please upload a CSV file.")
 
-    base_dir = Path(__file__).resolve().parent
-    model = joblib.load(base_dir / "real_model_v2.joblib")
-    feature_names = joblib.load(base_dir / "real_model_features_v2.joblib")
+    v3 = load_v3_model()
+    schema_features = load_v2_schema()
+    feature_names = v3.features
+    threshold = threshold_for_mode(v3, mode)
 
     total_rows = 0
     predicted_attacks = 0
@@ -778,15 +735,15 @@ async def predict_csv(file: UploadFile = File(...)):
     for chunk in _iter_prediction_csv(file.file):
         chunk.columns = chunk.columns.str.strip()
         try:
-            validate_model_feature_columns(chunk.columns, feature_names)
+            validate_model_feature_columns(chunk.columns, schema_features)
         except DatasetSchemaError as error:
             raise HTTPException(
                 status_code=400,
                 detail=str(error),
             ) from error
 
-        X = chunk[feature_names].apply(pd.to_numeric, errors="coerce")
-        X = X.replace([np.inf, -np.inf], np.nan)
+        X = chunk[feature_names]
+        X = X.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
 
         if X.isna().all(axis=1).any():
             raise HTTPException(
@@ -794,19 +751,9 @@ async def predict_csv(file: UploadFile = File(...)):
                 detail="CSV contains rows with no valid numeric model features.",
             )
 
-        predictions = model.predict(X).astype(int)
-        
-        probabilities = model.predict_proba(X)
-        classes = list(model.classes_)
-
-        if 1 not in classes:
-            raise HTTPException(
-                status_code=500,
-                detail="The model does not contain the expected attack class.",
-            )
-
-        attack_index = classes.index(1)
-        risks = probabilities[:, attack_index] * 100
+        probabilities = v3.predict_proba_attack(X)
+        predictions = (probabilities >= threshold).astype(int)
+        risks = np.asarray([calibrate_attack_probability(p) for p in probabilities]) * 100
 
         total_rows += len(chunk)
         predicted_attacks += int((predictions == 1).sum())
@@ -849,7 +796,10 @@ async def predict_csv(file: UploadFile = File(...)):
         "total_rows": total_rows,
         "predicted_attacks": predicted_attacks,
         "predicted_benign": predicted_benign,
-        "model": "Random Forest V2",
+        "model": "XGBoost V3",
+        "mode": mode,
+        "threshold": threshold,
+        "severity_note": "Severity cutoffs are provisional, uncalibrated.",
         "history_records_added": len(recent_samples),
         "note": "Predictions are model estimates. History contains a sample of the latest CSV predictions.",
     }
@@ -896,22 +846,17 @@ def _csv_row_explanation(state, row, prediction):
     try:
         if state.get("explainer_error"):
             raise RuntimeError(state["explainer_error"])
-        pipeline = state["model"]
-        imputed = pipeline.named_steps["imputer"].transform(row)
-        estimator = pipeline.named_steps["model"]
+        v3 = state["model"]
+        prepared = v3.prepare(row)
         if state.get("explainer") is None:
-            state["explainer"] = shap.TreeExplainer(estimator)
-        values = state["explainer"].shap_values(imputed)
-        class_index = list(estimator.classes_).index(prediction)
-        if isinstance(values, list):
-            impacts = np.asarray(values[class_index])[0]
+            state["explainer"] = shap.TreeExplainer(v3.model)
+        explanation = state["explainer"](prepared)
+        values = np.asarray(explanation.values)
+        if values.ndim == 3:
+            impacts = values[0, :, int(prediction)]
         else:
-            values = np.asarray(values)
-            if values.ndim == 3:
-                impacts = values[0, :, class_index]
-            else:
-                impacts = values[0]
-        names = state["feature_names"]
+            impacts = values.reshape(-1, len(v3.features))[0]
+        names = v3.features
         top = sorted(
             zip(names, impacts.tolist()), key=lambda item: abs(float(item[1])), reverse=True
         )[:3]
@@ -930,8 +875,8 @@ def _csv_row_explanation(state, row, prediction):
 
 
 @app.post("/api/stream/replay/start")
-def start_csv_replay(file: UploadFile = File(...), batch_size: int = 50):
-    """Start a paced simulation that replays actual CSV records through frozen V2."""
+def start_csv_replay(file: UploadFile = File(...), batch_size: int = 50, mode: str = "balanced"):
+    """Start a paced simulation that replays CSV records through V3."""
     global csv_replay
     if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Please upload a CSV file.")
@@ -942,12 +887,14 @@ def start_csv_replay(file: UploadFile = File(...), batch_size: int = 50):
         if csv_replay and csv_replay["status"] in {"running", "paused"}:
             raise HTTPException(status_code=409, detail="A CSV replay session is already active.")
 
-        base_dir = Path(__file__).resolve().parent
-        model = joblib.load(base_dir / "real_model_v2.joblib")
-        feature_names = joblib.load(base_dir / "real_model_features_v2.joblib")
-        if len(feature_names) != 82 or len(set(feature_names)) != 82:
+        v3 = load_v3_model()
+        schema_features = load_v2_schema()
+        feature_names = v3.features
+        threshold = threshold_for_mode(v3, mode)
+        if len(feature_names) != 47 or len(set(feature_names)) != 47:
             raise HTTPException(status_code=500, detail="Model feature configuration is invalid.")
 
+        base_dir = Path(__file__).resolve().parent
         replay_dir = base_dir / ".csv_replay_tmp"
         replay_dir.mkdir(exist_ok=True)
         temp_path = None
@@ -967,7 +914,7 @@ def start_csv_replay(file: UploadFile = File(...), batch_size: int = 50):
             header = pd.read_csv(temp_path, nrows=0, low_memory=False)
             header.columns = header.columns.str.strip()
             try:
-                validate_model_feature_columns(header.columns, feature_names)
+                validate_model_feature_columns(header.columns, schema_features)
             except DatasetSchemaError as error:
                 raise HTTPException(status_code=400, detail=str(error)) from error
             reader = pd.read_csv(temp_path, chunksize=batch_size, low_memory=False)
@@ -991,8 +938,11 @@ def start_csv_replay(file: UploadFile = File(...), batch_size: int = 50):
                 "path": temp_path,
                 "reader": reader,
                 "pending_chunk": first_chunk,
-                "model": model,
+                "model": v3,
                 "feature_names": feature_names,
+                "schema_features": schema_features,
+                "mode": mode,
+                "threshold": threshold,
                 "batch_size": batch_size,
                 "processed": 0,
                 "attacks": 0,
@@ -1002,10 +952,12 @@ def start_csv_replay(file: UploadFile = File(...), batch_size: int = 50):
             }
             temp_path = None
             return {
-                "status": "running", "mode": "CSV traffic replay simulation",
+                "status": "running", "mode": mode,
+                "simulation": "CSV traffic replay simulation",
                 "session_id": session_id, "filename": csv_replay["filename"],
                 "batch_size": batch_size, "processed": 0,
-                "note": "Source CSV records are replayed through frozen V2; this is not live capture. Labels, if present, are display-only.",
+                "detector_mode": mode, "threshold": threshold,
+                "note": "Source CSV records are replayed through V3; this is not live capture. Labels, if present, are display-only.",
             }
         except HTTPException:
             raise
@@ -1029,7 +981,10 @@ def advance_csv_replay():
         if not state:
             raise HTTPException(status_code=409, detail="No CSV replay session exists.")
         if state["status"] != "running":
-            return {"status": state["status"], "processed": state["processed"], "events": []}
+            return {
+                "status": state["status"], "processed": state["processed"],
+                "mode": state["mode"], "threshold": state["threshold"], "events": [],
+            }
         try:
             chunk = state.pop("pending_chunk", None)
             if chunk is None:
@@ -1037,16 +992,23 @@ def advance_csv_replay():
         except StopIteration:
             state["status"] = "completed"
             _close_csv_replay(state)
-            return {"status": "completed", "processed": state["processed"], "events": []}
+            return {
+                "status": "completed", "processed": state["processed"],
+                "mode": state["mode"], "threshold": state["threshold"], "events": [],
+            }
         except Exception as error:
             state["status"] = "error"
             state["error"] = f"Unable to read CSV replay: {error}"
             _close_csv_replay(state)
-            return {"status": "error", "processed": state["processed"], "events": [], "error": state["error"]}
+            return {
+                "status": "error", "processed": state["processed"],
+                "mode": state["mode"], "threshold": state["threshold"],
+                "events": [], "error": state["error"],
+            }
 
         chunk.columns = chunk.columns.str.strip()
         try:
-            validate_model_feature_columns(chunk.columns, state["feature_names"])
+            validate_model_feature_columns(chunk.columns, state["schema_features"])
             X = chunk[state["feature_names"]].apply(pd.to_numeric, errors="coerce")
             X = X.replace([np.inf, -np.inf], np.nan)
             if X.isna().all(axis=1).any():
@@ -1055,18 +1017,14 @@ def advance_csv_replay():
                 labels = validate_ground_truth_labels(chunk["Label"])
             else:
                 labels = None
-            predictions = state["model"].predict(X).astype(int)
-            probabilities = state["model"].predict_proba(X)
-            classes = list(state["model"].classes_)
-            if 1 not in classes:
-                raise ValueError("The model does not contain the expected attack class.")
-            attack_index = classes.index(1)
+            probabilities = state["model"].predict_proba_attack(X)
+            predictions = (probabilities >= state["threshold"]).astype(int)
             events = []
             for offset, (row_index, prediction, probability) in enumerate(
-                zip(chunk.index, predictions, probabilities[:, attack_index])
+                zip(chunk.index, predictions, probabilities)
             ):
                 numeric_index = state["processed"] + offset + 1
-                risk = float(probability) * 100
+                risk = calibrate_attack_probability(probability) * 100
                 prediction_label = "Attack" if prediction == 1 else "Benign"
                 explanation = _csv_row_explanation(
                     state, X.iloc[[offset]], int(prediction)
@@ -1085,6 +1043,8 @@ def advance_csv_replay():
                     "traffic_timestamp": traffic_timestamp,
                     "replay_session_id": state["id"],
                     "explanation": explanation,
+                    "mode": state["mode"],
+                    "threshold": state["threshold"],
                 }
                 if labels is not None:
                     event["ground_truth"] = "Benign" if labels.iloc[offset] == "BENIGN" else "Attack"
@@ -1096,6 +1056,7 @@ def advance_csv_replay():
             return {
                 "status": "running", "processed": state["processed"],
                 "predicted_attacks": state["attacks"], "predicted_benign": state["benign"],
+                "mode": state["mode"], "threshold": state["threshold"],
                 "events": events,
             }
         except HTTPException as error:
@@ -1127,6 +1088,7 @@ def control_csv_replay(action: str):
                     retained = [item for item in detection_records if item.get("replay_session_id") != replay_id]
                     detection_records.clear()
                     detection_records.extend(retained)
+                    history_store.remove_replay(replay_id)
             return {"status": "cleared", "processed": 0}
         if not csv_replay:
             raise HTTPException(status_code=409, detail="No CSV replay session exists.")
@@ -1141,11 +1103,7 @@ def control_csv_replay(action: str):
 
 
 @app.post("/api/stream/csv")
-async def stream_csv(file: UploadFile = File(...)):
-    import joblib
-    import pandas as pd
-    import numpy as np
-    from pathlib import Path
+async def stream_csv(file: UploadFile = File(...), mode: str = "balanced"):
 
     if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(
@@ -1153,13 +1111,11 @@ async def stream_csv(file: UploadFile = File(...)):
             detail="Please upload a CSV file.",
         )
 
-    base_dir = Path(__file__).resolve().parent
-    model = joblib.load(base_dir / "real_model_v2.joblib")
-    feature_names = joblib.load(
-        base_dir / "real_model_features_v2.joblib"
-    )
-
-    if len(feature_names) != 82 or len(set(feature_names)) != 82:
+    v3 = load_v3_model()
+    feature_names = v3.features
+    schema_features = load_v2_schema()
+    threshold = threshold_for_mode(v3, mode)
+    if len(feature_names) != 47 or len(set(feature_names)) != 47:
         raise HTTPException(
             status_code=500,
             detail="Model feature configuration is invalid.",
@@ -1176,16 +1132,14 @@ async def stream_csv(file: UploadFile = File(...)):
         ):
             chunk.columns = chunk.columns.str.strip()
             try:
-                validate_model_feature_columns(chunk.columns, feature_names)
+                validate_model_feature_columns(chunk.columns, schema_features)
             except DatasetSchemaError as error:
                 raise HTTPException(
                     status_code=400,
                     detail=str(error),
                 ) from error
 
-            X = chunk[feature_names].apply(
-                pd.to_numeric, errors="coerce"
-            )
+            X = chunk[feature_names].apply(pd.to_numeric, errors="coerce")
             X = X.replace([np.inf, -np.inf], np.nan)
 
             if X.isna().all(axis=1).any():
@@ -1194,19 +1148,12 @@ async def stream_csv(file: UploadFile = File(...)):
                     detail="CSV contains rows with no valid numeric features.",
                 )
 
-            predictions = model.predict(X).astype(int)
-            classes = list(model.classes_)
-            if 1 not in classes:
-                raise HTTPException(
-                    status_code=500,
-                    detail="The model does not contain the expected attack class.",
-                )
-            attack_probability_index = classes.index(1)
-            probabilities = model.predict_proba(X)[:, attack_probability_index]
-            latest_risk_score = round(float(probabilities[-1]) * 100, 2)
+            probabilities = v3.predict_proba_attack(X)
+            predictions = (probabilities >= threshold).astype(int)
+            latest_risk_score = round(calibrate_attack_probability(probabilities[-1]) * 100, 2)
 
             for prediction, probability in zip(predictions, probabilities):
-                risk_score = float(probability) * 100
+                risk_score = calibrate_attack_probability(probability) * 100
 
                 severity = severity_for_risk_score(risk_score)
                 prediction_label = "Attack" if prediction == 1 else "Benign"
@@ -1242,12 +1189,15 @@ async def stream_csv(file: UploadFile = File(...)):
 
     return {
         "status": "completed",
-        "mode": "CSV batch simulation",
+        "mode": mode,
+        "simulation": "CSV batch simulation",
         "filename": file.filename,
         "total_rows": total_rows,
         "attacks_detected": attacks,
         "benign_traffic": benign,
         "batch_size": 1000,
+        "threshold": threshold,
+        "severity_note": "Severity cutoffs are provisional, uncalibrated.",
         "batches": batches,
         "note": "CSV records were processed in batches; this is not live packet capture.",
         "latest_risk_score": latest_risk_score,

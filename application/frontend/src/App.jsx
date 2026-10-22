@@ -58,6 +58,7 @@ const [shapError, setShapError] = useState("");
 
 const [replayFile, setReplayFile] = useState(null);
 const [replayBatchSize, setReplayBatchSize] = useState(25);
+const [detectorMode, setDetectorMode] = useState("balanced");
 const [replayStatus, setReplayStatus] = useState("idle");
 const [replayError, setReplayError] = useState("");
 const [replayProcessed, setReplayProcessed] = useState(0);
@@ -75,7 +76,7 @@ const startReplay = async () => {
     const body = new FormData();
     body.append("file", replayFile);
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/stream/replay/start?batch_size=${replayBatchSize}`,
+      `http://127.0.0.1:8000/api/stream/replay/start?batch_size=${replayBatchSize}&mode=${detectorMode}`,
       body
     );
     setReplayStatus(response.data.status);
@@ -198,7 +199,8 @@ const uploadDataset = async (file) => {
   const postCsv = async (endpoint, uploadedFile) => {
     const formData = new FormData();
     formData.append("file", uploadedFile);
-    const response = await axios.post(`http://127.0.0.1:8000${endpoint}`, formData);
+    const modeQuery = endpoint === "/api/predict/csv" ? `?mode=${detectorMode}` : "";
+    const response = await axios.post(`http://127.0.0.1:8000${endpoint}${modeQuery}`, formData);
     return response.data;
   };
 
@@ -271,9 +273,15 @@ useEffect(() => {
       const response = await axios.get(
         "http://127.0.0.1:8000/api/model/explain"
       );
-      setShapData(response.data);
+      if (response.data.status === "unavailable") {
+        setShapData(null);
+        setShapError(response.data.message || "SHAP explanations unavailable.");
+      } else {
+        setShapData(response.data);
+      }
     } catch {
-      setShapError("Failed to load SHAP explanations.");
+      setShapData(null);
+      setShapError("SHAP explanations unavailable.");
     }
   };
 
@@ -553,8 +561,10 @@ useEffect(() => {
 
         {modelPrediction && (
           <div className="dashboard-card">
-            <h3>Real ML Model Predictions</h3>
+            <h3>V3 ML Model Predictions</h3>
             <p>Model: {modelPrediction.model}</p>
+            <p>Threshold mode: {modelPrediction.mode} ({modelPrediction.threshold})</p>
+            <p className="stat-caption">Severity cutoffs are provisional, uncalibrated.</p>
             <p>Total Rows: {modelPrediction.total_rows.toLocaleString()}</p>
             <p>
               Predicted Attacks:{" "}
@@ -653,7 +663,7 @@ useEffect(() => {
     
  <div className="dashboard-card csv-stream-controls">
   <h3>CSV Traffic Replay Simulation</h3>
-  <p>Replay actual records from a CSV through the frozen Random Forest V2 model. This uses stored traffic, not live packet inference. If a Label column is present, it is shown only as ground truth and never used as a prediction.</p>
+  <p>Replay stored CSV records through the active XGBoost V3 detector. This is not live inference. If a Label column is present, it is used only as ground truth. Risk is attack probability × 100; severity cutoffs are provisional, uncalibrated.</p>
 
  
 <div>
@@ -690,6 +700,7 @@ useEffect(() => {
     }}
   />
   <label>Records per step <input type="number" min="1" max="200" step="1" value={replayBatchSize} disabled={replayStatus === "running" || replayStatus === "paused"} onChange={(event) => setReplayBatchSize(Math.max(1, Math.min(200, Math.trunc(Number(event.target.value) || 1))))} /></label>
+  <label>Threshold mode <select value={detectorMode} disabled={replayStatus === "running" || replayStatus === "paused"} onChange={(event) => setDetectorMode(event.target.value)}><option value="balanced">Balanced (0.5)</option><option value="strict">Strict (0.9988)</option></select></label>
 </div>
 
 <div className="stream-status">
@@ -746,15 +757,15 @@ useEffect(() => {
   <article className="stat-card">
     <div className="stat-icon"><BrainCircuit /></div>
     <p>ML Model</p>
-    <h3>Random Forest</h3>
-    <span className="stat-caption">Real CIC-DDoS2019 model</span>
+    <h3>{modelStatus?.model_name || "XGBoost V3"}</h3>
+    <span className="stat-caption">Active CIC-DDoS2019 detector · 47 features</span>
   </article>
 
   <article className="stat-card">
     <div className="stat-icon"><ShieldAlert /></div>
     <p>Risk Assessment</p>
-    <h3>Prototype</h3>
-    <span className="stat-caption">Risk scoring module</span>
+    <h3>Risk score (experimental isotonic mapping) × 100</h3>
+    <span className="stat-caption">Severity cutoffs: provisional, uncalibrated</span>
   </article>
 
   <article className="stat-card">
@@ -770,6 +781,19 @@ useEffect(() => {
     <h3>Implemented</h3>
     <span className="stat-caption">CSV evaluation metrics</span>
   </article>
+</section>
+<section className="panel">
+  <div className="panel-header"><div><h3>Active model: XGBoost V3</h3><p>V2 remains a reference only.</p></div></div>
+  <p>Features: {modelStatus?.feature_count ?? 47}. Trained on {modelStatus?.trained_on ?? "CIC-DDoS2019 01-12 sample"}; evaluated on {modelStatus?.evaluated_on ?? "CIC-DDoS2019 03-11 sample"}.</p>
+  <div className="table-wrap"><table><thead><tr><th>Mode</th><th>Threshold</th><th>Recall</th><th>FPR</th></tr></thead><tbody>
+    {Object.entries(modelStatus?.operating_points || {}).map(([key, point]) => <tr key={key}><th>{key === "balanced_default" ? "Balanced" : "Strict"}</th><td>{point.threshold}</td><td>{(point.recall * 100).toFixed(2)}%</td><td>{(point.FPR * 100).toFixed(2)}%</td></tr>)}
+  </tbody></table></div>
+  <h4>V3 limitations</h4>
+  <ul>{(modelStatus?.limitations || []).map((limitation) => <li key={limitation}>{limitation}</li>)}</ul>
+  <h4>Calibration check (did not improve in-domain)</h4>
+  {modelStatus?.calibration?.evaluation?.map((item) => <p key={item.dataset}>{item.dataset}: Brier {item.brier_before.toFixed(4)} → {item.brier_after.toFixed(4)}; ECE {item.ece_before.toFixed(4)} → {item.ece_after.toFixed(4)}.</p>)}
+  {!modelStatus?.calibration?.evaluation && <p>Calibration evaluation unavailable.</p>}
+  <p><strong>V2 status:</strong> Random Forest V2 — reference only.</p>
 </section>
 <section className="panel">
   <div className="panel-header">
@@ -877,7 +901,7 @@ useEffect(() => {
 
             <section className="panel page-panel">
   <BrainCircuit size={32} className="green-text" />
-      <h2>Saved UDPLag Example Explanation</h2>
+      <h2>V3 Median-Feature Reference Explanation</h2>
   <button
   className="view-all"
   onClick={async () => {
@@ -885,13 +909,18 @@ useEffect(() => {
       const response = await axios.get(
         "http://127.0.0.1:8000/api/model/explain"
       );
-      setExplanation(response.data);
+      if (response.data.status === "unavailable") {
+        setExplanation(null);
+        alert(response.data.message || "SHAP explanations unavailable.");
+      } else {
+        setExplanation(response.data);
+      }
     } catch (error) {
       alert(error.response?.data?.detail || "Explanation failed.");
     }
   }}
 >
-  Explain first UDPLag example (SHAP)
+  Explain median-feature reference (SHAP)
 </button>
 <button
   className="view-all"
@@ -920,7 +949,7 @@ useEffect(() => {
 ))}
 
 
-{explanation && (
+{explanation?.explanation && (
   <div className="detection-details">
     {explanation.explanation.map((item) => (
       <div key={item.feature}>
@@ -934,8 +963,8 @@ useEffect(() => {
 
 <p>
   Model status: {modelStatus?.model_trained
-    ? "Real Random Forest model available"
-    : "Real model not found"}
+    ? "Active XGBoost V3 model available"
+    : "V3 model not found"}
 </p>
 
 <p>
@@ -956,7 +985,7 @@ useEffect(() => {
 
 
   <p>
-    Model status: Real Random Forest model available.
+    Model status: Active XGBoost V3 model available. Random Forest V2 is reference only.
   </p>
  <button
   className="view-all"

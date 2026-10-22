@@ -1,30 +1,58 @@
 # Intelligent Machine Learning-Based Intrusion Detection System for DDoS Attacks in IoT Networks
 
-This package contains the application, the saved Random Forest V2 model and its 82-feature schema, and the canonical completed research evaluation. Research-only baseline models are not substituted for the deployed V2 model.
+This package contains the application, the active XGBoost V3 detector, the preserved Random Forest V2 reference and its 82-feature schema, and the canonical completed research evaluation. V2 remains reference-only.
 
 ## Package layout
 
 - `application/` — FastAPI backend, React frontend, dependency manifests, and focused regression tests.
-- `model/` — authoritative copies of the deployed V2 model and feature schema. Identical runtime copies are beside the backend because the existing model loader resolves them relative to `backend/main.py`.
+- `model/` — protected V2 model and feature schema, retained as reference-only artifacts. V3 exports and loader are in `model_v3/`.
 - `research/results/` — canonical evaluation tables, confidence intervals, figures, SHAP artifacts, report, the CPU/memory benchmark, sanitized provenance metadata, and sanitized COMPLETE run manifest.
 - `research/code/` — evaluator, protocol helpers, CPU/memory benchmark, deterministic submission builder, and research regression tests.
 - `docs/` — evaluation documentation and this package manifest.
 
 ## CSV traffic replay demonstration
 
-In **Threat Detection**, choose a CSV containing the frozen model's 82 feature
-columns in the exact saved order, then start **CSV Traffic Replay Simulation**.
+In **Threat Detection**, choose a CSV containing the 82 V2 schema columns in
+the exact saved order, then start **CSV Traffic Replay Simulation**. The
+active V3 detector selects its 47 saved features in their saved order after
+the strict 82-column schema check.
 Optional non-feature columns such as `Label` and `Timestamp` may accompany the
 ordered features. Replay advances in small, configurable batches and supports
 pause, resume, stop, and clearing replay records. Model predictions are
 recorded in dashboard history; supplied labels are displayed only as
 ground-truth context and are never prediction inputs. Rows pass through the
-frozen V2 pipeline's existing preprocessing. Per-record SHAP contributions are
+V3's saved median imputation. Per-record SHAP contributions are
 shown when available; otherwise the dashboard states why they are unavailable.
 
 This replays stored CSV records and is not live network inference. Passing the
 feature-name/order check does not prove semantic feature-generation parity or
 independent-dataset validity. Live packet capture remains observational.
+
+## V3 model
+
+The active detector is the version-independent XGBoost V3 export in `model_v3/`.
+It uses 47 saved features and excludes ports, Protocol, Inbound, and
+SimillarHTTP. The 82-column V2 schema remains a strict CSV compatibility check;
+the detector then selects the V3 features in saved order. Use `mode=balanced`
+(threshold 0.5; recall 90.96%, FPR 5.11%) or `mode=strict` (threshold 0.9988;
+recall 72.66%, FPR 0.47%). The risk score uses the saved isotonic mapping
+fit on the first time half of 03-11 UDPLag,
+then multiplies by 100. Class decisions use the saved raw-probability operating
+thresholds. Severity cutoffs remain provisional and uncalibrated. Random Forest
+V2 remains reference-only.
+
+V3 limitations from its metadata:
+
+- sample-based training and test; one 03-11 file (Syn, UDP, UDPLag)
+- false-positive rate measured on ~2k benign rows
+- shortcut features removed, so results are not comparable to V2
+- not validated on other datasets or live traffic
+
+Calibration was assessed on the second time half of 03-11 UDPLag and on
+CIC-IDS2017 Friday DDoS plus benign morning traffic. On 03-11, Brier score
+changed from 0.0603 to 0.0627 and ECE from 0.0696 to 0.0711; on Friday, Brier
+changed from 0.4182 to 0.3855 and ECE from 0.4205 to 0.3724. These saved
+results do not establish reliable calibration across datasets.
 
 The **AI Insights** page also displays the saved same-source research
 evaluation: matched research-only refits and the frozen V2 reference are
@@ -36,7 +64,7 @@ validation. These values are read from the existing research result files.
 ## Prerequisites
 
 - Windows 10/11 or a compatible Python/Node environment.
-- Python 3.14 and pip; backend dependencies are listed in `application/requirements.txt`.
+- Python 3.14 and pip; backend dependencies, including XGBoost, are listed in `application/requirements.txt`.
 - Node.js and npm; frontend versions are locked in `application/frontend/package-lock.json`.
 
 ## Run the backend
@@ -64,6 +92,21 @@ npm run dev
 ```
 
 Open the local URL printed by Vite (normally `http://localhost:5173`).
+
+## API key and persistent history
+
+Set `SENTINEL_API_KEY` before starting the backend to require an `X-API-Key`
+header on non-health API routes. In PowerShell, for example:
+
+```powershell
+$env:SENTINEL_API_KEY = "your-local-secret"
+```
+
+Send that value in the `X-API-Key` request header. `/api/health` remains
+available without a key. If the variable is unset, API-key enforcement is off
+for local development. Recent detection records persist in a bounded SQLite
+database under `application/data/`; set `SENTINEL_HISTORY_DB` to use another
+path.
 
 ## Rebuild the submission archive
 
@@ -110,8 +153,8 @@ This only confirms that all 82 feature names appear once and in saved-schema ord
 - Original V2 provenance remains incomplete: the exact training-row identities and original extractor version/settings are not recorded in the available project artifacts. The generation definitions for `SimillarHTTP`, `Inbound`, `CWE Flag Count`, and `Fwd Header Length.1` remain unresolved; this prevents establishing live-to-V2 feature parity.
 - Matched-baseline recall at threshold 0.5 is about 13.3%; probability calibration was not evaluated.
 - End-to-end API latency was not measured.
-- Live V2 inference and automatic attack blocking are not implemented; live capture is optional metadata telemetry only.
-- Source datasets are intentionally excluded. Dataset preview and the application's SHAP explanation endpoint expect source dataset files; those functions require the dataset separately. Canonical research SHAP outputs are included under `research/results/`.
+- Live packet-to-feature inference and automatic attack blocking are not implemented; live capture is optional metadata telemetry only. V3 SHAP uses its saved median-feature reference and does not require a source dataset file.
+- Source datasets are intentionally excluded. Dataset preview still requires a user-supplied CSV; canonical research SHAP outputs are included under `research/results/`.
 - No compatible independent dataset has been established. `UDPLag.csv` has already been used for evaluation and threshold comparisons. `SimillarHTTP`, `Inbound`, `CWE Flag Count`, and `Fwd Header Length.1` still lack verified generation definitions and extraction provenance for cross-dataset parity. The V2 result on UDPLag is descriptive, not independent evidence.
 - Research metrics describe the documented UDPLag evaluation and matched baselines, not independent-test or end-to-end API results. Probability calibration was not evaluated; risk/severity thresholds remain provisional.
 

@@ -4,12 +4,14 @@ from io import BytesIO
 from pathlib import Path
 import unittest
 from unittest.mock import Mock, patch
+import json
 
 import joblib
 import numpy as np
 import pandas as pd
 from starlette.datastructures import UploadFile
 
+from backend import main
 from backend.main import severity_for_risk_score, stream_csv
 
 FEATURE_SCHEMA_PATH = (
@@ -42,14 +44,21 @@ class StreamSeverityTests(unittest.TestCase):
 
     def test_csv_stream_uses_probability_severity_for_benign_prediction(self):
         features = joblib.load(FEATURE_SCHEMA_PATH)
+        v3_features = json.loads(
+            (Path(__file__).resolve().parents[2] / "model_v3" / "v3_features.json").read_text(encoding="utf-8")
+        )
         mock_model = Mock()
-        mock_model.classes_ = np.array([1, 0])
-        mock_model.predict.return_value = np.array([0])
-        mock_model.predict_proba.return_value = np.array([[0.6, 0.4]])
+        mock_model.features = v3_features
+        mock_model.meta = {"operating_points": {
+            "balanced_default": {"threshold": 0.5},
+            "strict_low_fpr": {"threshold": 0.9988},
+        }}
+        mock_model.predict_proba_attack.return_value = np.array([0.4])
         chunk = pd.DataFrame([{feature: 0 for feature in features}])
 
         with (
-            patch("backend.main.joblib.load", side_effect=[mock_model, features]),
+            patch("backend.main.load_v3_model", return_value=mock_model),
+            patch("backend.main.load_v2_schema", return_value=features),
             patch("backend.main.pd.read_csv", return_value=iter([chunk])),
             patch("backend.main.record_detection") as record_detection,
         ):
@@ -61,8 +70,9 @@ class StreamSeverityTests(unittest.TestCase):
 
         self.assertEqual(result["benign_traffic"], 1)
         self.assertEqual(record_detection.call_args.kwargs["prediction"], "Benign")
-        self.assertEqual(record_detection.call_args.kwargs["risk_score"], 60.0)
-        self.assertEqual(record_detection.call_args.kwargs["severity"], "High")
+        expected_risk = main.calibrate_attack_probability(0.4) * 100
+        self.assertEqual(record_detection.call_args.kwargs["risk_score"], expected_risk)
+        self.assertEqual(record_detection.call_args.kwargs["severity"], main.severity_for_risk_score(expected_risk))
 
 
 if __name__ == "__main__":

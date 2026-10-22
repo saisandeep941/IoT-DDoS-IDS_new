@@ -7,4 +7,5 @@ pandas==3.0.6
 scikit-learn==1.9.1
 joblib==1.6.0
 shap==0.53.0
+xgboost==3.4.1
 

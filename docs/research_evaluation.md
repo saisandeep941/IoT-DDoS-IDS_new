@@ -6,6 +6,31 @@ The full research evaluation completed on 2026-10-17. The canonical detailed rep
 
 Older root-level balanced-sample outputs remain preserved in the source checkout, are excluded from this package, and are superseded. They must not be cited as the completed result.
 
+## V3 model
+
+The application's active detector is the version-independent XGBoost V3 export
+in `model_v3/`; the frozen Random Forest V2 remains reference-only. V3 uses 47
+features and the existing strict 82-column V2 CSV schema is retained for input
+compatibility before selecting those 47 features in saved order. The metadata
+operating points are balanced (threshold 0.5, recall 0.9096, FPR 0.0511) and
+strict (threshold 0.9988, recall 0.7266, FPR 0.0047). The risk score uses
+the saved isotonic mapping fit on the first time half of 03-11 UDPLag, then
+multiplies by 100. Class decisions use the raw saved operating thresholds;
+severity cutoffs remain provisional and uncalibrated.
+
+V3 limitations copied from its metadata:
+
+- sample-based training and test; one 03-11 file (Syn, UDP, UDPLag)
+- false-positive rate measured on ~2k benign rows
+- shortcut features removed, so results are not comparable to V2
+- not validated on other datasets or live traffic
+
+Calibration was evaluated on the 03-11 second time half and on CIC-IDS2017
+Friday DDoS plus benign morning traffic. Brier score / 15-bin ECE changed
+from 0.0603 / 0.0696 to 0.0627 / 0.0711 on 03-11, and from 0.4182 / 0.4205
+to 0.3855 / 0.3724 on Friday. These results do not establish reliable
+calibration across datasets.
+
 The evaluator read the original source CSVs. It did not rebuild the 21 GB processed CSV. The saved Random Forest V2 model and its feature file were read-only inputs; the research-only Random Forest baseline was separately fit and did not replace V2.
 
 ## Evaluation design
