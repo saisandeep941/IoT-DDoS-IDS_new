@@ -1,0 +1,246 @@
+{
+  "protocol": "Frozen V3, thresholds fixed from metadata (0.5, 0.9988); chunked scoring; stratified bootstrap percentile CIs, 1000 reps, 2000 draws/class where available; CIC Friday excludes PortScan and uses DDoS afternoon plus all morning rows.",
+  "features": [
+    "Flow Duration",
+    "Total Fwd Packets",
+    "Total Backward Packets",
+    "Flow Packets/s",
+    "Flow IAT Mean",
+    "Flow IAT Std",
+    "Flow IAT Max",
+    "Flow IAT Min",
+    "Fwd IAT Total",
+    "Fwd IAT Mean",
+    "Fwd IAT Std",
+    "Fwd IAT Max",
+    "Fwd IAT Min",
+    "Bwd IAT Total",
+    "Bwd IAT Mean",
+    "Bwd IAT Std",
+    "Bwd IAT Max",
+    "Bwd IAT Min",
+    "Fwd PSH Flags",
+    "Bwd PSH Flags",
+    "Fwd URG Flags",
+    "Bwd URG Flags",
+    "Fwd Packets/s",
+    "Bwd Packets/s",
+    "FIN Flag Count",
+    "SYN Flag Count",
+    "RST Flag Count",
+    "PSH Flag Count",
+    "ACK Flag Count",
+    "URG Flag Count",
+    "CWE Flag Count",
+    "ECE Flag Count",
+    "Down/Up Ratio",
+    "Subflow Fwd Packets",
+    "Subflow Bwd Packets",
+    "Init_Win_bytes_forward",
+    "Init_Win_bytes_backward",
+    "act_data_pkt_fwd",
+    "min_seg_size_forward",
+    "Active Mean",
+    "Active Std",
+    "Active Max",
+    "Active Min",
+    "Idle Mean",
+    "Idle Std",
+    "Idle Max",
+    "Idle Min"
+  ],
+  "results": [
+    {
+      "dataset": "CIC-DDoS2019 03-11 full UDPLag",
+      "rows": 725165,
+      "class_counts": {
+        "BENIGN": 4068,
+        "ATTACK": 721097
+      },
+      "raw_label_counts": {
+        "UDP": 112475,
+        "BENIGN": 4068,
+        "UDPLag": 1873,
+        "Syn": 606749
+      },
+      "roc_auc": 0.9900057103807759,
+      "roc_auc_ci95": [
+        0.9879809375,
+        0.9918903812500001
+      ],
+      "operating_points": {
+        "balanced": {
+          "threshold": 0.5,
+          "recall": 0.931809451433025,
+          "FPR": 0.07374631268436578,
+          "precision": 0.9995537208523931,
+          "tp": 671925,
+          "fp": 300,
+          "fn": 49172,
+          "tn": 3768,
+          "ci95": {
+            "recall": [
+              0.9312200716408472,
+              0.9324003220093829
+            ],
+            "FPR": [
+              0.06612586037364798,
+              0.08185840707964602
+            ],
+            "precision": [
+              0.9995044787936447,
+              0.9995999222153579
+            ]
+          }
+        },
+        "strict": {
+          "threshold": 0.9988,
+          "recall": 0.8898650250937113,
+          "FPR": 0.007620452310717798,
+          "precision": 0.9999516915740755,
+          "tp": 641679,
+          "fp": 31,
+          "fn": 79418,
+          "tn": 4037,
+          "ci95": {
+            "recall": [
+              0.8891340554738127,
+              0.8905709634071421
+            ],
+            "FPR": [
+              0.005156096361848574,
+              0.010570304818092428
+            ],
+            "precision": [
+              0.9999330026154934,
+              0.9999673367875153
+            ]
+          }
+        }
+      },
+      "per_label_recall": {
+        "BENIGN": {
+          "rows": 4068,
+          "recall_as_benign_at_thresholds": {
+            "balanced": 0.9262536873156342,
+            "strict": 0.9923795476892822
+          }
+        },
+        "Syn": {
+          "rows": 606749,
+          "recall_at_thresholds": {
+            "balanced": 0.919078564612385,
+            "strict": 0.9172623275852123
+          }
+        },
+        "UDP": {
+          "rows": 112475,
+          "recall_at_thresholds": {
+            "balanced": 0.999742164925539,
+            "strict": 0.7455523449655479
+          }
+        },
+        "UDPLag": {
+          "rows": 1873,
+          "recall_at_thresholds": {
+            "balanced": 0.9765082754938601,
+            "strict": 0.6807261078483716
+          }
+        }
+      },
+      "bootstrap": {
+        "replicates": 1000,
+        "stratified_class_sample_size": 2000,
+        "seed": 42
+      }
+    },
+    {
+      "dataset": "CIC-IDS2017 Friday DDoS + benign morning",
+      "rows": 414812,
+      "class_counts": {
+        "BENIGN": 286785,
+        "ATTACK": 128027
+      },
+      "raw_label_counts": {
+        "BENIGN": 286785,
+        "DDoS": 128027
+      },
+      "roc_auc": 0.4227612621009943,
+      "roc_auc_ci95": [
+        0.4050338625,
+        0.44109866875000003
+      ],
+      "operating_points": {
+        "balanced": {
+          "threshold": 0.5,
+          "recall": 0.34827028673639154,
+          "FPR": 0.33686559617832174,
+          "precision": 0.3157879826623984,
+          "tp": 44588,
+          "fp": 96608,
+          "fn": 83439,
+          "tn": 190177,
+          "ci95": {
+            "recall": [
+              0.34584892249291166,
+              0.35118373468096575
+            ],
+            "FPR": [
+              0.3352336244922154,
+              0.33876301061771014
+            ],
+            "precision": [
+              0.31382173559202925,
+              0.31767768040167
+            ]
+          }
+        },
+        "strict": {
+          "threshold": 0.9988,
+          "recall": 0.006311168737844361,
+          "FPR": 0.06580888121763691,
+          "precision": 0.041054824449977136,
+          "tp": 808,
+          "fp": 18873,
+          "fn": 127219,
+          "tn": 267912,
+          "ci95": {
+            "recall": [
+              0.00588938270833496,
+              0.006756582595858686
+            ],
+            "FPR": [
+              0.06486392245061631,
+              0.0667365796676953
+            ],
+            "precision": [
+              0.038334549774245344,
+              0.04382338131753873
+            ]
+          }
+        }
+      },
+      "per_label_recall": {
+        "BENIGN": {
+          "rows": 286785,
+          "recall_as_benign_at_thresholds": {
+            "balanced": 0.6631344038216782,
+            "strict": 0.934191118782363
+          }
+        },
+        "DDoS": {
+          "rows": 128027,
+          "recall_at_thresholds": {
+            "balanced": 0.34827028673639154,
+            "strict": 0.006311168737844361
+          }
+        }
+      },
+      "bootstrap": {
+        "replicates": 1000,
+        "stratified_class_sample_size": 2000,
+        "seed": 42
+      }
+    }
+  ]
+}
