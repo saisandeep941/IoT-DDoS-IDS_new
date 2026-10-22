@@ -88,6 +88,32 @@ FILES = (
     "README.md",
 )
 
+# Keep the curated archive explicit: this additional inventory contains only
+# project code, model exports, documentation, and machine-readable research
+# results. It never walks source data or frontend dependency directories.
+V3_FILES = (
+    "application/backend/detection_history.py",
+    "application/ml/test_v3_model.py",
+    "application/ml/test_detection_history_persistence.py",
+    "model_v3/v3_xgb_model.json",
+    "model_v3/v3_features.json",
+    "model_v3/v3_imputer_medians.json",
+    "model_v3/v3_metadata.json",
+    "model_v3/v3_loader.py",
+    "docs/final_v31_report.md",
+)
+RESULT_FILES = tuple(
+    path.relative_to(ROOT).as_posix()
+    for path in sorted((ROOT / "research" / "results_v31").rglob("*"))
+    if path.is_file() and path.suffix.lower() in {".py", ".json", ".csv", ".md", ".txt"}
+)
+PROMOTED_FILES = tuple(
+    path.relative_to(ROOT).as_posix()
+    for path in sorted((ROOT / "model_v3_1").rglob("*"))
+    if path.is_file() and path.suffix.lower() in {".json", ".py"}
+) if (ROOT / "model_v3_1").is_dir() else ()
+FILES = tuple(dict.fromkeys((*FILES, *V3_FILES, *RESULT_FILES, *PROMOTED_FILES)))
+
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest().upper()

@@ -1,0 +1,116 @@
+{
+  "fingerprints": {
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_UDP.csv": {
+      "mtime_ns": 1791773442288598500,
+      "size": 1506039371
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\UDPLag.csv": {
+      "mtime_ns": 1791773388740019800,
+      "size": 157968770
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\TFTP.csv": {
+      "mtime_ns": 1791773433802621700,
+      "size": 9302011115
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_DNS.csv": {
+      "mtime_ns": 1791773492392596200,
+      "size": 2133307948
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_NTP.csv": {
+      "mtime_ns": 1791773461630421800,
+      "size": 645008606
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_SNMP.csv": {
+      "mtime_ns": 1791773458622418100,
+      "size": 2172579815
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\Syn.csv": {
+      "mtime_ns": 1791773436255677000,
+      "size": 637312127
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_MSSQL.csv": {
+      "mtime_ns": 1791773477986296800,
+      "size": 1889181756
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_LDAP.csv": {
+      "mtime_ns": 1791773485440132300,
+      "size": 917302277
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_NetBIOS.csv": {
+      "mtime_ns": 1791773469576441600,
+      "size": 1697479829
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_SSDP.csv": {
+      "mtime_ns": 1791773451320419300,
+      "size": 1252686219
+    }
+  },
+  "files": {
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_UDP.csv": {
+      "cutoff": "2018-12-01T18:29:12.2683108+05:30",
+      "min": "2018-12-01T18:06:57.628026+05:30",
+      "max": "2018-12-01T18:34:45.928382+05:30",
+      "rows": 3136802
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\UDPLag.csv": {
+      "cutoff": "2018-12-01T18:55:21.7780746+05:30",
+      "min": "2018-12-01T18:34:45.928673+05:30",
+      "max": "2018-12-01T19:00:30.740425+05:30",
+      "rows": 370605
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\TFTP.csv": {
+      "cutoff": "2018-12-01T22:02:12.1804698+05:30",
+      "min": "2018-12-01T19:04:27.403713+05:30",
+      "max": "2018-12-01T22:46:38.374659+05:30",
+      "rows": 20107827
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_DNS.csv": {
+      "cutoff": "2018-12-01T16:46:28.1664648+05:30",
+      "min": "2018-12-01T16:21:39.813448+05:30",
+      "max": "2018-12-01T16:52:40.254719+05:30",
+      "rows": 5074413
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_NTP.csv": {
+      "cutoff": "2018-12-01T16:02:46.0597908+05:30",
+      "min": "2018-12-01T14:47:11.18381+05:30",
+      "max": "2018-12-01T16:21:39.778786+05:30",
+      "rows": 1217007
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_SNMP.csv": {
+      "cutoff": "2018-12-01T17:48:37.7112508+05:30",
+      "min": "2018-12-01T17:30:13.902782+05:30",
+      "max": "2018-12-01T17:53:13.663368+05:30",
+      "rows": 5161377
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\Syn.csv": {
+      "cutoff": "2018-12-01T19:03:40.0708046+05:30",
+      "min": "2018-12-01T19:00:30.741451+05:30",
+      "max": "2018-12-01T19:04:27.403143+05:30",
+      "rows": 1582681
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_MSSQL.csv": {
+      "cutoff": "2018-12-01T17:14:13.3535738+05:30",
+      "min": "2018-12-01T17:02:32.915441+05:30",
+      "max": "2018-12-01T17:17:08.463107+05:30",
+      "rows": 4524498
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_LDAP.csv": {
+      "cutoff": "2018-12-01T17:00:34.3832426+05:30",
+      "min": "2018-12-01T16:52:40.254769+05:30",
+      "max": "2018-12-01T17:02:32.915361+05:30",
+      "rows": 2181542
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_NetBIOS.csv": {
+      "cutoff": "2018-12-01T17:27:36.8149434+05:30",
+      "min": "2018-12-01T17:17:08.463789+05:30",
+      "max": "2018-12-01T17:30:13.902732+05:30",
+      "rows": 4094986
+    },
+    "C:\\Users\\bonus\\Desktop\\IoT-DDoS-IDS\\dataset\\01-12\\DrDoS_SSDP.csv": {
+      "cutoff": "2018-12-01T18:04:12.8349162+05:30",
+      "min": "2018-12-01T17:53:13.663425+05:30",
+      "max": "2018-12-01T18:06:57.627789+05:30",
+      "rows": 2611374
+    }
+  }
+}
